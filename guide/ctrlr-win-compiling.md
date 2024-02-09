@@ -1,5 +1,5 @@
 # Compiling Ctrlr: For Windows 10
-
+#### Author: Sjoerd W Bijleveld
 - This document describes the steps I took to compile Ctrlr with Visual Studio 2019 on Windows 10.
 - Disclaimer: I’m primarily a Mac/Apple user, so I’m probably not able to answer typical technical Windows/Visual Studio questions.
 - Below is the About `Ctrlr` window of the compiled version.
