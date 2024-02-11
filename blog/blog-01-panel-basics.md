@@ -23,7 +23,7 @@ end
 — Called when a modulator value changes
 — @mod http://ctrlr.org/api/class_ctrlr_modulator.html
 — @value new numeric value of the modulator
-toggle_led3 = function(–[[ CtrlrModulator –]] mod, –[[ number –]] value, –[[ number –]] source)
+toggle_led3 = function(--[[ CtrlrModulator --]] mod, --[[ number --]] value, --[[ number --]] source)
     led = panel:getModulatorByName(“LED”)
     if value == 1 then
         led:setValue(1, false)
@@ -36,8 +36,8 @@ end
 
 ### HUMAN FLY
 - you write methods in the Lua editor:
-- get to this via `Panel>Lua editor` or call up methods on several parameters on the properties panel – create/edit new methods using `add`.
-- everything seems to be called `modulator`` – even groups.
+- get to this via `Panel>Lua editor` or call up methods on several parameters on the properties panel - create/edit new methods using `add`.
+- everything seems to be called `modulator`` -- even groups.
 - so what is Component? ie: `getComponent()` vs `getModulator()`
 
 ### ANSWER: Mr.ToR
@@ -105,8 +105,8 @@ end
 
 
 ### HumanFly:
-– Called when a button value changes
-– increment count
+-- Called when a button value changes
+-- increment count
 ```lua
 function increment2(value)
     local count = panel:getModulatorByName(“count1_8”):getModulatorValue()
