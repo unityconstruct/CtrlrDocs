@@ -35,21 +35,21 @@ console(String(mB:toHexString(1)))
 
 My most used commands are:
 ```lua
-– memory block creation
+-- memory block creation
 ProgramFileData = MemoryBlock()
-– memory block copy to a new one
+-- memory block copy to a new one
 mbName = MemoryBlock(mbNameEmpty)
-– copy a memory block into another one
+-- copy a memory block into another one
 LoadedProgramData:copyFrom (mbName, 465, 11)
-– size check
+-- size check
 ProgramFileData:getSize()
-– Filling amemory block from a file
+-- Filling amemory block from a file
 file:loadFileAsData(ProgramFileData)
-– extracting single byte
+-- extracting single byte
 LoadedProgramData:getByte(6)
-– extracting range of bytes
+-- extracting range of bytes
 LoadedProgramData:getRange(440,15)
-– setting a byte
+-- setting a byte
 LoadedProgramData:setByte(6, modOsc1Tune:getModulatorValue())
 ```
 
