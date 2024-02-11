@@ -1,19 +1,24 @@
-Atom March 2013
+## blog-39-CallModulator
+
+### Atom March 2013
 
 Don’t do setPropertyInt setPropertyString, setProperty() is enough Ctrlr will figure out what type it is (saves typing).
 
 Also try to avoid calling panel:getModulatorByName() at runtime, this is the biggest mistake people make, in situation where you have hundreds or thousands of modulators in the panel (those static ones count too) Ctrlr needs to go through the table to find the one you want.
 
 If you are done with designing your panel you can type somewhere in the init method for a panel
-
+```lua
 modulator1 = panel:getModulatorByName("modulator1")
 component1 = modulator1:getComponent()
+```
+
 and then later in your code do
 
+```lua
 modulator1:setProperty("whatever", 0)
 component1:getProperty("whatever")
+```
 saves time and typing.
-
 
 
 Ok the theory behind arrays is very interesting, if anyone is interested: http://en.wikipedia.org/wiki/Array_data_structure
@@ -28,12 +33,21 @@ You can create an array of modulators that indexed using their names or some oth
 
 
 
-How to know the index of a modulator (not the VstIndex as they are not the same). Something like panel:getModulatorByName():getIndex() ?
+How to know the index of a modulator (not the VstIndex as they are not the same). Something like
+```lua
+panel:getModulatorByName():getIndex() ?
+```
 
 That’s a weird question, cause you don’t use indexes like that, you use that usually in a loop or something similar. The modulator is not aware of it’s index in the array, so getModulatorByName():getIndex() won’t work. I can add a method like that but it would be in the panel object. But if you do:
 
+```lua
 modulatorIndex = panel:getModulatorByName("name"):getIndex()
+```
+
 and then use modulatorIndex it makes no sense, since it’s better to fetch the modulator
 
+```lua
 modulator = panel:getModulatorByName("name")
+```
+
 and then use that object.

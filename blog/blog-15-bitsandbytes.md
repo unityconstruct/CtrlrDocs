@@ -1,12 +1,11 @@
-Bit operations on a variable
-___________________________
+## blog-15-bitsandbytes.md
+### Bit operations on a variable
 
-I’ve put a value of a component in a variable. I want to alter the value of the variable by shifting bits.
+- I’ve put a value of a component in a variable. I want to alter the value of the variable by shifting bits.
+- Let’s say I’ve got a value of decunak 15. When I express decimal 15 in binary it is `0 0 0 0 1 1 1 1`. My synthesizer accepts for a specific parameter `decimal 15` as `0 0 0 1 1 1 1 0`, which is in `decimal 30`. So I have to `shift bits 4-7` one position to the left.
+- I’ve thought it to be in a function like:
 
-Let’s say I’ve got a value of decunak 15. When I express decimal 15 in binary it is 0 0 0 0 1 1 1 1. My synthesizer accepts for a specific parameter decimal 15 as 0 0 0 1 1 1 1 0, which is in decimal 30. So I have to shift bits 4-7 one position to the left.
-
-I’ve thought it to be in a function like:
-
+```lua
 function myBitShift(bits, positions, value)
 
 -- bits = how many bits to be shifted
@@ -18,43 +17,42 @@ function myBitShift(bits, positions, value)
 		local shftValue = bit.lshift(value(i+1),positions)
 	end
 end
-How can I get this to work? Many thanks for all help!
+```
 
-This topic was modified 2 months, 2 weeks ago by EnzoF04.
-March 8, 2020 at 12:25 pm#117304REPLY | REPORT | QUOTE
+- How can I get this to work? Many thanks for all help!
+- This topic was modified 2 months, 2 weeks ago by EnzoF04.
+- March 8, 2020 at 12:25 pm#117304REPLY | REPORT | QUOTE
 
+- Tedjuh helped me with the correct code, I had to use tonumber to convert the data coming from a modulator value.
 
-Tedjuh helped me with the correct code, I had to use tonumber to convert the data coming from a modulator value.
-
-
+```lua
 bit.lshift(tonumber(modVcoValue),1)
+```
 
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
-Constructing a byte from 4 bits
-_______________________________
+### Constructing a byte from 4 bits
 
 February 11, 2017 at 6:39 pm#71243
 
-human fly
+### human fly
 
-i have 4 partials and they can have 16 combinations. i’ve decided the best way to do this is to just list all 16 combinations, as it isn’t very long.
+- i have 4 partials and they can have 16 combinations. i’ve decided the best way to do this is to just list all 16 combinations, as it isn’t very long.
+- say the partials are called P1, P2, P3, P4
+- and i want to say, for example:
 
-say the partials are called P1, P2, P3, P4
-and i want to say, for example:
+```lua
 if P1==1, P2==0, P3==0, P4==1
+```
 
-ie: partial states are on, off, off, on
+- ie: partial states are on, off, off, on
+- what is the correct way to do this? i’ve just put a
+- comma there for the example.
+- February 11, 2017 at 8:26 pm#71246
 
-what is the correct way to do this? i’ve just put a
-comma there for the example.
-
-February 11, 2017 at 8:26 pm#71246
-
-dasfaker
+### dasfaker
 
 Yes, you can do it something like this (not tested)
 
+```lua
 local p1 = nil
 local p2 = nil
 local p3 = nil
@@ -67,18 +65,15 @@ if panel:getModulatorByName("P4"):getValue() == 0 then p4 = 0 else p4 = 1 end
 
 sum = (p1*1) + (p2*2) + (p3*4) + (p3*8)
 sum variable will give you a unique value for every possible combination.
+```
 
+### spiffo
 
+- Hi, I’m stuck again,
+- What I need to do is read the state of 4 Buttons (On or Off) then insert them as bits 0,1,2,3 in a 8bit byte, then update a Modulator with that value.
+- What I have so far is this, but something isn’t right:
 
-
-spiffo
-
-Hi, I’m stuck again,
-
-What I need to do is read the state of 4 Buttons (On or Off) then insert them as bits 0,1,2,3 in a 8bit byte, then update a Modulator with that value.
-
-What I have so far is this, but something isn’t right:
-
+```lua
 function OP_ON_OFF_BitSet()
 
 bit3 = panel:getModulatorByName(“OP1_ON_OFF”):getModulatorValue()
@@ -101,18 +96,19 @@ byte93Int=byte93:getBitRangeAsInt(0,8)
 panel:getModulatorByName(“OP_ON_OFF_BYTE”):setModulatorValue(byte93Int, false, var, false)
 
 end
+```
 
 Can anyone help please?
 
 May 14, 2020 at 9:54 pm#118396REPLY | REPORT | QUOTE
 
 
-human fly
+### human fly
 
+- i ended up going for my long way, because i wanted other UI things to happen. so the method ended up as: (hope this posts ok)
+- (edit: looking at it now, it depends on some subfunctions, and this is probably not much help to look at) (you only need to look at the first 2 lines of each option)
 
-i ended up going for my long way, because i wanted other UI things to happen. so the method ended up as: (hope this posts ok)
-(edit: looking at it now, it depends on some subfunctions, and this is probably not much help to look at) (you only need to look at the first 2 lines of each option)
-
+```lua
 function partial_ops()
 	-- This stops issues during panel bootup
 	if panel:getRestoreState() == true or panel:getProgramState() == true 
@@ -599,12 +595,13 @@ function partial_ops()
 	clikSt34:setVisible(true)
 	end
 end
+```
 
 May 15, 2020 at 2:12 am#118410REPLY | REPORT | QUOTE
 
 
 
-dnaldoog
+### dnaldoog
 
 Hi Spiffo,
 
@@ -612,7 +609,7 @@ I understand from your post that the upper four bits are always 0, right? I hope
 
 So, you just need to return the lower 4 bits and set the upper four to zero (automatically):
 
-
+```lua
 local switches={
 panel:getComponent("OP1_ON_OFF"):getValue()*8,
 panel:getComponent("OP2_ON_OFF"):getValue()*4,
@@ -625,22 +622,20 @@ for _,v in ipairs (switches) do
 sum=sum+v
 end
 panel:getComponent(“OP_ON_OFF_BYTE”):setValue(sum,true)
+```
 May 15, 2020 at 2:18 am#118411REPLY | REPORT | QUOTE
-
---------------------------
 
 The post will get deleted if I re-edit. What I meant was
 
-dnaldoog wrote:
-…and set the upper four to zero (automatically):
+> dnaldoog wrote:
+> …and set the upper four to zero (automatically):
 
-… and the upper four bits will automatically be set to zero.
+> … and the upper four bits will automatically be set to zero.
 
-**Note If this is a MIDI data byte the MSBit x000 0000 will always be set to zero anyway.
+> **Note If this is a MIDI data byte the MSBit x000 0000 will always be set to zero anyway.
 
-Regards,
+> Regards,
 
---------------------
 
 Actually, I just checked your code and it seems to work fine, so maybe I don’t understand the question completely?
 
@@ -648,42 +643,43 @@ May 15, 2020 at 9:07 am#118413REPLY | REPORT | QUOTE
 
 
 
-spiffo
+### spiffo
 
 Yep
 
+```
 bit7, bit6, bit5 & bit 4 are always Zero, according to the Yamaha DX11 MIDI Spec
 bit3, bit2, bit1 & bit 0 set Operators 1 to 4 On/Off
+```
 
-So the HEX value to send ends up with a Max of 0F and a Min of 00
-
-My code was throwing up:
-
+- So the HEX value to send ends up with a Max of 0F and a Min of 00
+- My code was throwing up:
+```
 Error Message: No matching overload found, candidates: void setModulatorValue(CtrlrModulator&,int,bool,bool,bool)
+```
 
 I just change the line to:
-
+```lua
 panel:getModulatorByName(“OP_ON_OFF_BYTE”):setModulatorValue(byte93Int, true, true, true)
+```
 
-And now it works fine!
-
-I’m not sure why there was a var in there, I must have copied that from somewhere else, they are all supposed to be a Boolean right?
-
-Anyways thanks for your propmt help as always, learning as I go!
+- And now it works fine!
+- I’m not sure why there was a var in there, I must have copied that from somewhere else, they are all supposed to be a Boolean right?
+- Anyways thanks for your propmt help as always, learning as I go!
 
 May 15, 2020 at 10:45 am#118414REPLY | REPORT | QUOTE
 
 
-goodweather
+### goodweather
 
 
-Different things to improve:
-– declare all your modulators in a separate AssignModulators() method instead of calling each time getModulatorByName(). Call that method from your PanelLoaded() method on panel init.
-Later on, you can directly use those mod variables.
+#### Different things to improve:
+- declare all your modulators in a separate AssignModulators() method instead of calling each time getModulatorByName(). Call that method from your PanelLoaded() method on panel init.
+- Later on, you can directly use those mod variables.
 So:
-in AssignModulators you have declarations like modOPOnOff = panel:getModulatorByName(“OP_ON_OFF_BYTE”)
-then in your other methods you simply use modOPOnOff:setValue(byte93Int, true)
-– this is actually the second improvement, use setValue() io setModulatorValue(). The last 2 args of setModulatorValue() are not used (saw that in another post)
-– to get the value of a mod, simply do modOPOnOff:getModulatorValue(). You should not go through the component as indicated in dnaldoog code.
+- in AssignModulators you have declarations like modOPOnOff = panel:getModulatorByName(“OP_ON_OFF_BYTE”)
+- then in your other methods you simply use modOPOnOff:setValue(byte93Int, true)
+- this is actually the second improvement, use setValue() io setModulatorValue(). The last 2 args of setModulatorValue() are not used (saw that in another post)
+- to get the value of a mod, simply do modOPOnOff:getModulatorValue(). You should not go through the component as indicated in dnaldoog code.
 
 For the rest, indeed dnaldoog code is the right answer. Just take each value and multiply it by 8,4,2,1 according to the bit position then add everything and you get your final value.
