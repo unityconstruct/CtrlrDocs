@@ -1,4 +1,6 @@
-samoth Aug 2020
+## blog-47-Lua-Ctrlr-HowTo
+
+### samoth Aug 2020
 
 1. Click on the canvas of your panel and add a component, an uiToggleButton to your canvas.
 2. From dropdown menu go to: Panel -> Panel mode. Now you are in edit mode.
@@ -7,33 +9,33 @@ On the left in this field you can see three icons. When the mouse is moving over
 4. Click on this last one and fill in your chosen name for this new method. By instance: myDumpFromSynth.
 On the far right of this field there are arrows to open the available methods. Choose myDumpFromSynth.
 5. Now click on the “edit selected method” icon and the lua editor is opening showing you the bare bones of the selected method myDumpFromSynth.
-BETWEEN the lines, the first beginning with “myDumpFromSynth = function” and the last one with only “end” you have to complete your method.
-It should be something like this (this example is for a Roland synth):
+- BETWEEN the lines, the first beginning with “myDumpFromSynth = function” and the last one with only “end” you have to complete your method.
+- It should be something like this (this example is for a Roland synth):
 
+```lua
 myDumpFromSynth = function(--[[ CtrlrModulator --]] mod, --[[ number --]] value, --[[ number --]] source)
     mD = {}
     mD = CtrlrMidiMessage({0xF0, 0x41, 0x0F, 0x2B, 0x11, 0x00, 0x06, 0x00, 0x00, 0x01, 0x20, 0x59, 0xF7}) -- REQUEST PATCH MESSAGE
     panel:sendMidiMessageNow(mD) -- SENDS THE DUMP REQUEST MESSAGE
 end
+```
 
-After completing this step you open the lua editor drop down menu and click on “File –> save and compile all”.
-Close the lua editor.
+- After completing this step you open the lua editor drop down menu and click on “File –> save and compile all”.
+- Close the lua editor.
 
 6. Leave the edit mode in Ctrlr by clicking again on Panel -> Panel mode.
 Go to the dropdown menu item “Tools” and click on “MIDI Monitor”. This will open this monitor. Go to the dropdown menu of this monitor and check in the menu item “View” three sub items: “monitor input”, “monitor output” and “show RAW data size”.
 When clicking on your uiToggleButton you should see the incoming midi you requested. Otherwise there is something wrong with you sysex request in the myDumpFromSunth method.
 
 7. Go in edit mode and click on the withe canvas (not on a component). In the edit panel is an item “Called when a panel receives a midi message”. When in the dropdown menu the item “propertyIDs/Names” is checked, you will not see “Called when a panel receives a midi message”, but instead the technical property description “luaPanelMidiReceived”.
-Here, you open a new method with the name “midiMessageReceived” according to the procedure described above.
-So here you have to catch the midi flow your synth has sent. Between all the midi flows you can identify the right flow when you know its data size (you can read this size in the midi monitor as described above) or using some of its address bytes.
-This method should be something like this:
+- Here, you open a new method with the name “midiMessageReceived” according to the procedure described above.
+- So here you have to catch the midi flow your synth has sent. Between all the midi flows you can identify the right flow when you know its data size (you can read this size in the midi monitor as described above) or using some of its address bytes.
+- This method should be something like this:
 
+```lua
 --
 -- Called when a panel receives a midi message (does not need to match any modulator mask)
 -- @midi   CtrlrMidiMessage object
-
-
-
 --
 
 midiMessageReceived = function(midi)
@@ -53,45 +55,45 @@ midiMessageReceived = function(midi)
 		end -- if Id1
 	end --if s
 end -- function
+```
 
 8. Some notes about the console:
 
-8.1. From dropdown menu go to: Panel -> LUA console
-8.2 Click on the bottom part of the Console
-8.3 type console(“Hello world”)
-8.4 The text “Hello world” should appear on the upper part of the Console.
-8.5 If this works, you can try using console(“Any text”) in LUA code you use for your Panels.
+ 8. 1 From dropdown menu go to: Panel -> LUA console
+ 8. 2 Click on the bottom part of the Console
+ 8. 3 type console(“Hello world”)
+ 8. 4 The text “Hello world” should appear on the upper part of the Console.
+ 8. 5 If this works, you can try using console(“Any text”) in LUA code you use for your Panels.
 
 
-dnaldoog
+### dnaldoog
 
 
 See here for a way of doing this .
 
 I would find out from the manual which control each byte is to be assigned to in the dump message and make a table of your Ctrlr modulators uiSliders variable names etc in that exact order:
 
-
+```lua
  myList={
 "VibratoRate",
 "VibratoDepth",
 "Vibreto Delay", ...
 }
+```
 
 You would then in the Ctrlr program create a function that reacts to incoming MIDI LuaPanelMidiReceived eg myMidiReceived()
 
 When you perform a patch dump from the machine it will be a certain size. You monitor for incoming messages of that size and then run code on it triggering the function only when the packet size is the appropriate one; I would pass the MIDI memory block as a parameter to that function updateInterface() and optionally the size of the message to avoid recalculating it.
 
-
+```lua
 myMidiReceived = function(--[[ CtrlrMidiMessage --]] midi)
+	local s = midi:getSize()
+	if s ==  129 then -- update controls 129 = size of dump
 
-local s = midi:getSize()
----------------------------------------------------------
-if s ==  129 then -- update controls 129 = size of dump
-
-    updateInterface(midi,s)
+		updateInterface(midi,s)
+	end
 end
-
-end
+```
 
 in the updateInterface() function you would loop through the table assigning MIDI message bytes values to each control.
 
@@ -103,11 +105,12 @@ Loop though each byte with the table.
 
 For example
 
-
+```lua
 local offset =9
 for i,v in ipairs (myList) do
 panel:getModulatorByname(v):setValue(midi:getData():getByte(i+offset,true)
 end
+```
 
 i+offset might be 10, so you’ll have to play around with that to get the correct byte position.
 
@@ -119,23 +122,25 @@ There are many clues for this in my Roland JD-990 panel which incorporates the S
 
 You can also convert midi:getData() to a lua table using:
 
-
+```lua
 t={}
 midi:getData():toLuaTable(t)
+```
 
 You could then modify the contents of the table and repack as a MemoryBlock and resend to the Synth:
 
-
+```lua
 m=MemoryBlock()
 m:createFromTable(t)
 panel:sendMidiMessageNow(CtrlrMidiMessage(m:toHexString(1)))
+```
 
 The other option would be to work solely with MemoryBlocks:
 
 
+### Jsh
 
-Jsh
-
+```lua
 —
 — Called when a panel receives a midi message (does not need to match any modulator mask)
 — @midi CtrlrMidiMessage object
@@ -155,10 +160,11 @@ progDumpMsg = CtrlrMidiMessage(progDumpTable)
 panel:sendMidiMessageNow(progDumpMsg)
 end
 end
+```
 
+### dnaldoog
 
-dnaldoog
-
+```lua
 myMethod = function(--[[ CtrlrMidiMessage --]] midi)
 	local msgSize = midi:getSize()
 	if msgSize == 1179 then -- If message is program dump
@@ -170,6 +176,7 @@ myMethod = function(--[[ CtrlrMidiMessage --]] midi)
 		panel:sendMidiMessageNow(progDumpMsg)
 	end
 end
+```
 
 
 

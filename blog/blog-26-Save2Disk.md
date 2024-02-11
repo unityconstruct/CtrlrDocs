@@ -1,27 +1,30 @@
-How to capture Cancel from utils.SaveFileWindow?
-------------------------------------------------
+## blog-26-Save2Disk
+
+### How to capture Cancel from utils.SaveFileWindow?
 
 May 29, 2016 
-goodweather
+
+### goodweather
 
 Hi,
 is it possible to capture the click on Cancel button when using utils.saveFileWindow and when the filename is already known (name of the file that was loaded)?
-
+```lua
 if Pro2PackedBankData:getSize() == 116622 then
 	f = utils.saveFileWindow ("Save Pro 2 bank dump sysex file", File(sFullPath), "*.syx", true)
 	f:create()
 	f:replaceWithData(Pro2PackedBankData)
 With the above code, as the filename is predefined, the file is created whatever button is pressed.
-Testing f==nil seems not working.
-Any clue?
+```
+- Testing f==nil seems not working.
+- Any clue?
 
 Thx in advance!
 
 
-Possemo
+# Possemo
 
 I just copied this from Carl Licroys panel. It won’t save the file when hit cancel. It does a few checks, don’t know which is relevant for the cancel button:
-
+```lua
 	fileToWrite=utils.saveFileWindow("Save patch to disk",File(suggestPatchNameFolder),"*.syx",true)
 
 	if fileToWrite:isValid()==false then return end
@@ -48,10 +51,10 @@ I just copied this from Carl Licroys panel. It won’t save the file when hit ca
 	if fileToWrite:replaceWithData (dataToWrite)==false then
 		utils.warnWindow ("File write", "Sorry, the Editor failed to\nwrite the data to file!")
 	end
-
+```
 	
-goodweather
+### goodweather
 
-Thx Poss. Unfortunately by reading the code I can see it won’t help as I’m opening the dialog window with already an existing filename…
-So: the file is valid and existing and will be overwritten…
+- Thx Poss. Unfortunately by reading the code I can see it won’t help as I’m opening the dialog window with already an existing filename…
+- So: the file is valid and existing and will be overwritten…
 

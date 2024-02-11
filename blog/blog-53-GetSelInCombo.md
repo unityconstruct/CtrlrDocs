@@ -1,17 +1,20 @@
-DnaldeT 5 maart 2021
+## blog-53-GetSelInCombo
+
+### DnaldeT 5 maart 2021
 
 Does this work?
-
+```lua
 comboId = panel:getcombo(name):getSelectedId()
 
 If comboId == 0 then
 -- do something
 end
+```
 
 Or you have to use getSelectedItemIndex, can't remember.
 
 
-Godlike-Productions
+### Godlike-Productions
 
 
 That will work.
@@ -19,21 +22,22 @@ That will work.
 This is my entire method.
 
 I'm not sure if there is an index method as well, because Id is essentially Index.
-
+```lua
 updatePatchName = function(--[[ CtrlrModulator --]] mod, --[[ number --]] value, --[[ number --]] source)
 
     local patchSelected = panel:getCombo("upperProgramCombo"):getSelectedId()
     patchNameLabel:getComponent():setPropertyString ("uiLabelText", jupiterBank[patchSelected].name)
 
 end
+```
 
 
 
-dnaldoog
+### dnaldoog
 
 Here are a few functions I use:
 
-
+```lua
 function returnComboSelectedItemIndex(myCombo)
 	-- Your method code here
     local c = panel:getComboComponent(myCombo)
@@ -52,9 +56,10 @@ function returnSelectedPatchNameFromCombo(myCombo)
         local combo = c:getOwnedComboBox()
             return combo:getText() 
 end
+```
 
 
-Godlike-Productions
+### Godlike-Productions
 
 Also Atom gives some good examples of multi level combos in the DEMO - popup menu panel, which comes with ctrlr
 
@@ -65,7 +70,7 @@ Look at: https://docs.juce.com/master/classComboBox.html
 But this is also a full model and you need to check what has been ported to Ctrlr by testing the different methods/functions.
 
 
-Godlike-Productions
+### Godlike-Productions
 
 I still get confused with the c++ coding from Juce.
 
@@ -73,6 +78,6 @@ I can never remember if comboBox::getSelectedId() ends up as comboBox.getSelecte
 
 My search strategy is
 
-Is there an example in ctrlr?
-Is there an example in LUA? Yes - will it work in 5.1? Does it rely on a module like LuaJIT?
-Is it documented in Juce?
+- Is there an example in ctrlr?
+- Is there an example in LUA? Yes - will it work in 5.1? Does it rely on a module like LuaJIT?
+- Is it documented in Juce?

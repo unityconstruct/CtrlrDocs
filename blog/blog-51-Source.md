@@ -1,13 +1,16 @@
-Dnaldoog 3 maart 2021
+## blog-51-Source
+
+### Dnaldoog 3 maart 2021
 
 You can fix this by using the source Luke
 
-
+```lua
 x=function(mod,value,source)
    if source == 4 then
           uitls.warnWindow("You made it",""please do something!")
     end
 end
+```
 
 The only problem is you will not be able to run this function from another lua function, because the parameter to the sending function will send 5 or 6, so the call will naturally be blocked!
 
@@ -23,11 +26,11 @@ Right now the only solution I can think of is you might have to have a completel
 
 So in that function you would have to have:
 
-
+```lua
 if source == 5 or source == 6 then
 utils .warnWindow(“”,””)
 end 
-
+```
 Doubling up like that could be a drag if the method is very large.
 
 I think I wrote to you a long time ago when we were discussing this issue that my JD990 panel had all of these functions in it that weren’t getting triggered when the panel loaded, I never worked out why they weren’t triggered like this.
@@ -37,53 +40,59 @@ I have tried setting a variable from ‘true’ to ‘false’ on load by using 
 
 It seems like you can block functions at boot by adding
 
-
+```lua
 x=function(mod,value,source)
 if source ~= 6 then
 -- do stuff
 end
 end -- callback for modulator named myMod1
+```
 
 If you change another modulator from a second one:
 
-
+```lua
 y=function(mod,value,source)
 if source ~= 6 then
 x(mod,value,source)
 end
 end
+```
 
 then function x() will receive '4' as source. But you could change this to any arbitrary number I suppose.
 
-
+```lua
 y=function(mod,value,source)
 if source ~= 6 then
 x(nil,value,100)
 end
 end
+```
 
 If the user changes the modulator - its own callback Called When the Modulator Changes it will pass '4' to itself. Of course. So instead of source ~=6, you could do if source==4 if this function is never called except when the user changes it.
 
-
+```lua
 x=function(mod,value,source)
 if source ==4  then
 -- do stuff
 end
 end -- callback for modulator named myMod1
+```
 
 If you do :
 
-
+```lua
 z=function(mod,value,source)
 if source ~= 6 then
 panel:getModulatorByName("myMod1"):setValue(value,true)
 end
 end
+```
 
 then function x() (attached to myMod1)will receive '5' as source.
 
 
 From: /Source/Lua/CtrlrLuaModulator.cpp
+```lua
 value(“initialValue”, 0),
 value(“changedByHost”, 1),
 value(“changedByMidiIn”, 2),
@@ -93,6 +102,7 @@ value(“changedByLua”, 5),
 value(“changedByProgram”, 6),
 value(“changedByLink”, 7),
 value(“changeByUnknown”, 8)
+```
 
 So you could set source at -1 or anything over 9 for custom purposes.
 changedByProgram '6' must be at boot time? changedByMidiIn might be interesting '2'.
@@ -103,63 +113,58 @@ That JD-990 panel confuses me because I never did any of this and it never runs 
 
 
 
-dobo365
+### dobo365
 
 
 Yes, if the source parameter is listened to at boot time / panel opening. I'll let yo know the results of my tests.
 
 And, FYI, I have been using the source=2 several times to have the panel showing the right tab based on what the user is doing on the synth. Turning a knob on the synth sends a CC (or NRPN or sysex) to the modulator that is triggering its change method. The first thing in the change method is to switch to the tab where that modulator is lying.
 dobo365
-14 days ago
-Author
 
 Yes, if the source parameter is listened to at boot time / panel opening. I'll let yo know the results of my tests.
 
 And, FYI, I have been using the source=2 several times to have the panel showing the right tab based on what the user is doing on the synth. Turning a knob on the synth sends a CC (or NRPN or sysex) to the modulator that is triggering its change method. The first thing in the change method is to switch to the tab where that modulator is lying.
 
 
-dnaldoog
+### dnaldoog
 
-Ah so source ==2 is what comes in when the user  changes a knob on the
-synth? That’s going to be very useful because then we can change functions
-depending on that source parameter different To when the user changes a
-lknob on the panel. Excellent.
+Ah so source ==2 is what comes in when the user  changes a knob on the synth? That’s going to be very useful because then we can change functions depending on that source parameter different To when the user changes a lknob on the panel. Excellent.
 
 
 
-dobo365
+### dobo365
 
-OK. I made a few tests and need to do more (esp. with VST instances).
-Current status is mixed and can drives you nuts... 
+- OK. I made a few tests and need to do more (esp. with VST instances).
+- Current status is mixed and can drives you nuts... 
 
-    source=6 is indeed used at panel start and source=4 is used when you press the button in the panel
-    as is, I can see that when you open the second panel, each method is called 2 times. I guess once for the first panel and once for the second one
-    when adding the source=6 protection, the second panel opens without the popup issue; Great!!!
-    when clicking on a button in the second panel (Rename for example), the method is called 2 times and the popup appears 2 times, once for the new panel and once for the second one
+- source=6 is indeed used at panel start and source=4 is used when you press the button in the panel
+- as is, I can see that when you open the second panel, each method is called 2 times. I guess once for the first panel and once for the second one
+- when adding the source=6 protection, the second panel opens without the popup issue; Great!!!
+- when clicking on a button in the second panel (Rename for example), the method is called 2 times and the popup appears 2 times, once for the new panel and once for the second one
 
 Further tests to be done:
 
-    different panels but with the same philosophy and method names. I really hope this will work because will make copy/paste of code between panels easier
-    same panel in VST on 2 different tracks
+- different panels but with the same philosophy and method names. I really hope this will work because will make copy/paste of code between panels easier
+- same panel in VST on 2 different tracks
     
- Dnaldoog
+### Dnaldoog
     
 Here is a test panel I made that also tests for source==2. You can change the CC number for the uiSlider labelled "incoming", but I found I had to close the panel and reopen it for that to work. 
 
-    When this panel is loaded source = 6 is generated.
-    When another modulator modifies another modulator source = 5 is generated.
-    When the user changes the value on a modulator source = 4 is generated
+- When this panel is loaded source = 6 is generated.
+- When another modulator modifies another modulator source = 5 is generated.
+- When the user changes the value on a modulator source = 4 is generated
 
 source parameter_1_0_0_2021-03-05_21-49.zip
 
-dobo365
+### dobo365
 
 I have now done further tests and have an happy face thanks to you, @dnaldoog !
 So:
 
-    it is needed to add a test for source==6 and source==1 in the beginning of all methods containing calls to utils.xxx functions
-    On my panels I have such code:
-
+- it is needed to add a test for source==6 and source==1 in the beginning of all methods containing calls to utils.xxx functions
+- On my panels I have such code:
+```lua
 --
 -- Called when a modulator value changes
 -- @mod   http://ctrlr.org/api/class_ctrlr_modulator.html
@@ -173,17 +178,18 @@ Load_OnChange = function(--[[ CtrlrModulator --]] mod, --[[ number --]] value, -
 	end	
 ...
 end
+```
 
-    I can now open different panels in parallel
-    I can now open the same panel several times either in standalone or in VST
-    In VST it is now possible to save DAW presets and replaced them without the multiple popups issue
+- I can now open different panels in parallel
+- I can now open the same panel several times either in standalone or in VST
+- In VST it is now possible to save DAW presets and replaced them without the multiple popups issue
 
 I'm now adapting all my panels one by one including their manual.
 Many thanks again!!!
 
 
 
-dnaldoog
+### dnaldoog
 
 Great to hear Goodweather,
 
@@ -192,7 +198,7 @@ Looks like I might have to go back and change all my panels too!
 
 Here is a suggested function that all this could be wrapped in:
 
-
+```lua
 panelLoadBlock=function(src)
 local set = {
   [0] = false, --value(“initialValue”, 0),
@@ -207,17 +213,19 @@ local set = {
   } -- false allows function to be run 
 return set[src]
 end -- function
+```
 
 So, any function that needs to be blocked or muted when the panel loads would have this code at the beginning of the function.
 
-
+```lua
 myFunctionToBlock=function(mod,value,source)
 if panelLoadBlock(source) then return end
 utils.warnWindow("Hello","World")
 end -- my function
+```
 
 
-dobo365
+### dobo365
 
 Yes of course with a function it works as well.
 
@@ -230,13 +238,13 @@ I didn't put the source limitation in other methods. Maybe they are also fired b
 Will try that by putting a simple console(tostring(source)) statement in some of them as I did for my main tests.
 
 
-Dnaldoog 1 mei 2021
+### Dnaldoog 1 mei 2021
 
 Here is code I use for radio buttons using source to avoid infinite loops.
 
 Table t{} contains the names of the buttons in the radio group:
 
-
+```lua
 ProgramSelect = function(mod,value,source)
     if source == 4 then
         local sName = L(mod:getName())
@@ -261,19 +269,20 @@ PROGRAM02=panel:getModulatorByName("PROGRAM02")
 PROGRAM03=panel:getModulatorByName("PROGRAM03")
 PROGRAM04=panel:getModulatorByName("PROGRAM04")
 --]]
+```
 
 
 https://ctrlr.org/radio-button-code-generator/
 
 
-Godlike-Productions
+### Godlike-Productions
 
 Oh nice, that's probably an even nicer way of doing it.
 
 Does source 4 work if a button is pressed via MIDI (ie a user has mapped an Ableton Modulator to press the button)?
 
 
-dnaldoog
+### dnaldoog
 
 I think in this post Goodweather talks about source=2 being passed in for incoming.
 

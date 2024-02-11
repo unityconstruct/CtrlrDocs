@@ -1,4 +1,6 @@
-thestudiohades  7 juni 021
+## blog-59-InterpolatedValuesUsingUiFixedSlider
+
+### thestudiohades  7 juni 021
 
 Hi all,
 I'm trying to design my first Vst interface for a little hardware synth i have, but i'm facing an issue regarding the modulator configuration when using uiImageSlider.
@@ -15,7 +17,7 @@ Eric
 
 
 
-dnaldoog
+### dnaldoog
 
 Does this example panel answer the question? It uses uiFixedSlider to display an interpolated value to screen while sending CC 0-127.
 
@@ -26,7 +28,7 @@ See attached panel!
 Interpolate using uiFixedSlider_0_0.zip
 
 
-thestudiohades
+### thestudiohades
 
 Hi John, Thanks for your fast reply !
 
@@ -50,24 +52,29 @@ I am at work now and thought the repli.it would have saved. Maybe I wasn't logge
 
 You will create a new object say:
 
+```lua
 local x=Interpolate:new(value,1,1,-25,25)
+```
 
 The first argument is the modulator value:
-
+```lua
     panel:getModulatorByName("mymod"):getValue()
     use math.floor()=1 math ceil()=0 to round down or up
     multiply result by 1 (in this case) : sometimes 0.10 for fractional values
     minimum value -25
     maximum value +25
+```
 
 and you can see the interpolated result using x:print()
 
 so if you put the class though a loop, you can work out your values needed for uiFixedSlider.
 
+```lua
 for i=0,127 do
 x=Interpolate:new(i,1,1,-25,25)
 console(tostring(x:print())
 end
+```
 
 Something like that!
 
@@ -80,7 +87,7 @@ bivg
 Button Interpolate Value Generator_1_0_0_2021-06-08_23-02.zip
 
 
-thestudiohades
+### thestudiohades
 
 
 Hello John,
@@ -101,7 +108,7 @@ Cordialy,
 Eric
 
 
-Dnaldoog
+### Dnaldoog
 
 Hi Eric!
 
@@ -112,10 +119,12 @@ Regards,
 John
 
 This is the function that runs when the value is changed
+```lua
 callback
 
 uncheck (interpolate.png)
 uncheckthis (interpolate02.png)
+```
 
 Interpolate using uiFixedSlider LUA_0_0_2021-06-10_07-34.zip
 
