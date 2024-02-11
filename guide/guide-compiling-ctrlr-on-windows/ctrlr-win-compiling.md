@@ -6,7 +6,7 @@
 - Disclaimer: I’m primarily a Mac/Apple user, so I’m probably not able to answer typical technical Windows/Visual Studio questions.
 - Below is the About `Ctrlr` window of the compiled version.
 
-![image](ctlr-compiling-on-window-01-about.png)
+![image](ctrlr-compiling-on-window-01-about.png)
 
 The publishing date of this version is: April 8, 2021
 My version of Visual Studio 2019 is: `16.9.4` and I installed it for the following 2 workloads:
@@ -14,7 +14,7 @@ My version of Visual Studio 2019 is: `16.9.4` and I installed it for the followi
    • Desktop development with C++.
 I did use Windows 10 Pro English running virtual on my iMac with VMWare Fusion. I did use a fresh (but rather old) installment of `Windows 10` and before I could install and run `Visual Studio 19`, I had to do every update available for Windows 10. (My copy of Windows 10 dates back from August 2015 and was originally probable too old.)
 
-![image](ctlr-compiling-on-window-02-win10-specs.png)
+![image](ctrlr-compiling-on-window-02-win10-specs.png)
 
 ## Download the Ctrlr source files
 - The first thing you have to do of course is download the latest master from the `Ctrlr Github`[https://github.com/RomanKubiak/ctrlr]. First step you have to after downloading is unzipping `boost.zip`
@@ -34,7 +34,7 @@ I did use Windows 10 Pro English running virtual on my iMac with VMWare Fusion. 
 - Next type ‘bash’, again without the quotes, and drag the script file ‘remove_finals_from_JUCE.sh (located in the scripts folder) into the terminal window and hit `ENTER`. A long list of files scrolls by. 
 - The window looks like this:
 
-![image](ctlr-compiling-on-window-03-cygwin.png)
+![image](ctrlr-compiling-on-window-03-cygwin.png)
 
 - Do the same with the script file `remove_final.sh` found in the `JUCE` directory.
 - I’m not sure if this is really needed, but it seemed not doing any harm.
@@ -49,7 +49,7 @@ I did use Windows 10 Pro English running virtual on my iMac with VMWare Fusion. 
 - `Path to JUCE` is the path to the `Juce` folder in your `ctrlr-master` folder. 
 - `Path to JUCE Modules` is the path to the modules folder inside the `Juce` folder of the `ctrlr-master` folder.
 
-![Alt text](ctlr-compiling-on-window-04-juce-global-paths.png)
+![Alt text](ctrlr-compiling-on-window-04-juce-global-paths.png)
 
 - Now choose `File>Open`... and pick the file: `\ctrlr-master\Ctrlr.jucer` 
 - This file contains all the (source) files you need to build Ctrlr. Click on the export button of Projucer.
@@ -60,29 +60,29 @@ I did use Windows 10 Pro English running virtual on my iMac with VMWare Fusion. 
 - Before you can do the actual building you have to adjust some settings in `Visual Studio`. 
 - The first one is the set the `Preferred Build Tool Architecture` to `64-bit (x64)`.
 
-![Alt text](ctlr-compiling-on-window-05-vs-proj-props.png)
+![Alt text](ctrlr-compiling-on-window-05-vs-proj-props.png)
 
 - Choose option `Properties` and in the `Properties` window `choose Advanced` and set the `architecture`:
 
-![Alt text](ctlr-compiling-on-window-06-vs-proj-props-advanced-build-arch-x64.png)
+![Alt text](ctrlr-compiling-on-window-06-vs-proj-props-advanced-build-arch-x64.png)
 
 - The second setting has to do with the so called `C/C++ Output File`. 
 - Before you set this, make sure you have selected the `Ctrlr_SharedCode` item in the `Solution Explorer` side pane, because the setting will affect this item.
 
-![Alt text](ctlr-compiling-on-window-07-vs-solution-explorer-shared-code.png)
+![Alt text](ctrlr-compiling-on-window-07-vs-solution-explorer-shared-code.png)
 
 - Now go again to `Project>Properties` (the same menu option when setting the `Build Architecture`, see above) and choose `C/C++> Output Files>Program Database file Name`, and choose (or in case of not showing the text, type): `<inherit from parent or project defaults>`
 
-![Alt text](ctlr-compiling-on-window-08-vs-proj-props-c++-output-files.png)
+![Alt text](ctrlr-compiling-on-window-08-vs-proj-props-c++-output-files.png)
 
 - This has to be done because of the problem discussed here. 
 - Click `OK` and set the build to `Release` and `x64`, you may choose otherwise:
 
-![Alt text](ctlr-compiling-on-window-09-vs-build-release-x64.png)
+![Alt text](ctrlr-compiling-on-window-09-vs-build-release-x64.png)
 
 - Next start the actual building:
 
-![Alt text](ctlr-compiling-on-window-10-vs-menu-build-build-ctlr-sharedcode.png)
+![Alt text](ctrlr-compiling-on-window-10-vs-menu-build-build-ctrlr-sharedcode.png)
 
 - After a few minutes and many warnings, mostly of type `C4459`, if all is well the build succeeds. Next task is building the `Ctrlr_StandalonePlugin` project.
 
