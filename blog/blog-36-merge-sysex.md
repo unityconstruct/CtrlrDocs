@@ -1,7 +1,9 @@
-How I can create a sysex file from table on panel
+## blog-36-merge-sysex
+
+### How I can create a sysex file from table on panel
 July 5, 2020
 
-lecleto
+### lecleto
 
 Hello Ctrlrs!
 
@@ -14,7 +16,7 @@ How I can do this?
 Thank ins advance!
 
 
-dnaldoog
+### dnaldoog
 
 Hi Lecleto,
 
@@ -22,7 +24,7 @@ You need to convert the table data into binary (MemoryBlock()).
 
 The example below is tablecentric using lua loops, but you can also use MemoryBlock functions to do the same thing.
 
-
+```lua
 save_sysex_to_file = function(mod, value, source)
 
 local t={}
@@ -53,14 +55,14 @@ local dataToSave=MemoryBlock.fromLuaTable(t) -- create MemoryBlock from table
     end
 
 end --end function
----------------------------------------------------------
+```
+
 See attached panel. Also with a function to read a sysex file back into 5 tables.
 
-Attachments:
-Save-Tables-To-File_1_0_Hell-O-Kitty_2020-07-06_08-02.bpanelz
+Attachments: `Save-Tables-To-File_1_0_Hell-O-Kitty_2020-07-06_08-02.bpanelz`
 
 
-lecleto
+### lecleto
 
 Hello Dnaldoog! One more thanks!
 
@@ -71,7 +73,7 @@ I will try here. Will be perfect this feature in my panels.
 Thank you sooo much!!
 
 
-dnaldoog
+### dnaldoog
 
 Well thank you lecleto!
 
@@ -90,7 +92,7 @@ Regards,
 JG
 
 
-lecleto
+### lecleto
 
 Hello Dnaldoog!
 
@@ -101,7 +103,7 @@ I also have a JV-1010 and I really like of this unit! In reality JV-1010 was my 
 So, if possible, try this ang give me your feedback!
 
 
-dnaldoog
+### dnaldoog
 
 Hi lecleto,
 
@@ -110,17 +112,17 @@ Certainly not vast knowledge, but just much of what you ask I have done myself b
 But thank you for the nice compliment. Wish it were true.
 
 
-lecleto
+### lecleto
 
 Yeah, Dnaldoog! Now working perfectly!!!
 
-Saving patches on PC! Your example panel was perfect!!
-So, the first upgrade to JV-Patched JV-XP is ready!
-I will extend to my other panel to Roland JV-880.
+- Saving patches on PC! Your example panel was perfect!!
+- So, the first upgrade to JV-Patched JV-XP is ready!
+- I will extend to my other panel to Roland JV-880.
 
 Many thanks!!
 
-samoht
+### samoht
 
 Hi, Donaldoog,
 
@@ -130,6 +132,6 @@ Studying Lua and Ctrlr, your comments are of great help for me too!
 Thanks!
 
 
-dnaldoog
+### dnaldoog
 
 Thanks Samoht. It’s nice to hear that! Appreciated.

@@ -1,15 +1,17 @@
-Possemo 2016
+## blog-45-Snapshots
+
+### Possemo 2016
 
 “Program Snapshot” saves a snapshot of all current modulator values. It is a simple way of storing patches and send them to the synth. In the newer Ctrlr releases the menu is broken so it is not possible to send the snapshot to the synth. But you can view the snapshots in the menu “Midi Library”. Not all synths will appreciate being hit by a ton of parameter values, so it is not the best way of storing and sending patches anyway.
 
-Wikter
+### Wikter
 
 Adjust the midi message timing to avoid overloads in your machine. It will take some more time but the transmission will be safer.
 
 Sorry, I forgot to tell that with the midi library you can build entire banks, just create a bank and copy the snapshots to it.
 You have to do it by keyboard or by copy+paste, drag n drop doesn’t works here.
 
-wildthing 2019
+### wildthing 2019
 
 Hi guys, I’m trying to improve my panels and I would like to add a tab with a library made of saved snapshots. My idea is to create a kind of midi bank without using sysex but nothing than midi controls.
 
@@ -18,7 +20,7 @@ The first thing i need to understand is how to get all the modulators values fro
 I stress out that i don’t want to translate midi CC into sysex but just create a patch file unsing snapshot values.
 I’ve tried to figure out how to do this thing but it’s too difficult to me so i realy need some help. Do you have any idea about how can i do that? Any hint would be much appreciated!
 
-Dnaldoog
+### Dnaldoog
 
 Hi wildthing,
 
@@ -32,9 +34,9 @@ You would collect your uiSlider values into a lua table and then convert that ta
 
 One way of doing that might be to record value changes using a callback function set in [Called when any modulator changes it’s [sic] value] into a lua table, which is then converted into a file (see function saveContentAsData() in the DEMO file). You can filter which kind of modulator is to be recorded using modulator:getUiType() in that callback function.
 
-Demopanel
+### Demopanel
 
-
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <panel name="DEMO - Files" panelAuthorName="Roman Kubiak" panelAuthorEmail="kubiak.roman@gmail.com"
@@ -434,5 +436,5 @@ Demopanel
                componentRectangle="8 418 344 19" uiType="uiLabel" componentLayerUid="b3092ae838000000cccccccca0339706"/>
   </modulator>
 </panel>
-
+```
 

@@ -1,22 +1,26 @@
-Moving Components with LUA #268  26 april 2021
+## blog-57-MovingComponentsUsingLua
+
+### Moving Components with LUA #268  26 april 2021
 
 
-Godlike-Productions 
+### Godlike-Productions 
 
 I couldn't find how to do this on the old forums
 
 If you need to move a component with LUA this code works.
-
+```lua
 mainText = panel:getModulatorByName("mainText")
 
 mainText:getComponent():setTopLeftPosition(193, 35)
+```
 
 
 
-Dobo
+## Dobo
 
 You can get all properties of a component with
-
+```lua
 what(panel:getModulatorByName("modulator-2"):getComponent())
+```
 
 for example

@@ -1,7 +1,9 @@
-Get “label” from popup submenu item
+## blog-33-Get-labelNameAsVar
+
+### Get “label” from popup submenu item
 June 29, 2020
 
-damien
+### damien
 
 
 I am working with popups for preset bank management
@@ -12,39 +14,41 @@ let’s say :
 UA1UnitRamReverbBank:addItem(00, "Small Room Verb", true, false, )
 
 I want to display “Vocal Plate 1” on a label with the function :
-
+```lua
 UAPstItemName = XXXX -- The item name
 UAPstName = string.format("%s", UAPstItemName)
 panel:getLabel("lblPrstUA"):setText(UAPstName)
-I checked the Juce docs for popups but cannot figure out to get this :
-https://docs.juce.com/master/classPopupMenu.html
-https://docs.juce.com/master/structPopupMenu_1_1Item.html#details
+```
+
+- I checked the Juce docs for popups but cannot figure out to get this :
+- https://docs.juce.com/master/classPopupMenu.html
+- https://docs.juce.com/master/structPopupMenu_1_1Item.html#details
 
 Thanks a lot for your help.
 
-Attachments:
-
-Capture-d’écran-le-2020-06-28-à-18.19.56.png
+Attachments: `Capture-d’écran-le-2020-06-28-à-18.19.56.png`
 
 
-dnaldoog
-
+### dnaldoog
+```lua
 if ret == 0 then -- the selected index of the popup
 		return
 	end
 	panel:getLabel("lblPrstUA"):setText(lookup[ret]))
+```
 The way I do this in the ctrlr.org/c-plg150-an/ panel, which has many examples of this, is refer back to a lookup table of names.
 
-
+```lua
 lookup={
 "Small room verb",
 "plate reverb",
 "large hall",
 ...
 }
+```
 
 
-Damien
+### Damien
 
 Hi dnaldoog,
 
@@ -63,41 +67,45 @@ Is there a way to “index” a keyed table so that “for k,v in pair(t)” I g
 Thanks a lot!
 
 
-dnaldoog
+### dnaldoog
 
 Hi Damien, it’s not easy to do in lua unlike php, but if you need to, read lua.org/pil/19.3.html.
 
 In your case it looks like the hash is a numerical sequence, so you don’t need a hash table; a vector table is all you need.
-
+```lua
 t={"plate reverb","room reverb","Hall reverb"}
 
 for i,v in ipairs(t) do
 console(String("0"..i.." "..v))
 end
+```
 Regards,
 
 JG
 
 
-damien
+### damien
 
 Thanks for your reply, I tried LUA “while …” function and “sort” without the success I wanted.
 I decided to reformat all my tables without keys.
 
 from
 
-
+```lua
 local Preset1UnitRamName={[00] = "Vocal Plate 1",...}
 local Preset1UnitRomName={[50] = "Small Room Rev",...}
+```
+
 to
 
-
+```lua
 local Preset1UnitRamName={"00 Vocal Plate 1",...}
 local Preset1UnitRomName={"50 Small Room Rev",...}
+```
 and used string.sub to reformat in two parts the value from the selected table(PresetName) [required statements relative to the popup item selected ID where defined beforehand], as the number, and the Preset name.
 
 And there you go:
-
+```lua
 	for i,v in ipairs(PresetName) do
 		local index = tonumber(i-1)
 		if index==PstID or index == PstID-50 then -- convert the Preset Number in its Table Index value
@@ -108,12 +116,12 @@ And there you go:
 			panel:getLabel("lblProgramChanges"):setText(PstSpecName)
 		end -- if
 	end -- for
-This sub.string reformat is very convenient.
+```
+- This sub.string reformat is very convenient.
+- Thanks for your help once again
 
-Thanks for your help once again
 
-
-dnaldoog
+### dnaldoog
 
 Hi Damien,
 
@@ -121,17 +129,21 @@ I am a bit confused about where the table Preset is.
 
 You declare two separate tables
 
-
+```lua
 local Preset1UnitRamName={"00 Vocal Plate 1",...}
 local Preset1UnitRomName={"50 Small Room Rev",...
+```
+
 but then I don’t see them being looped through.
 
 Another way to do this is have an array matrix:
-
+```lua
 local Preset={{"00","Vocal Plate 1"},{"50","Small Room Rev",}}
+```
+
 then:
 
-
+```lua
 for i,v in ipairs(Preset) do
 local index = i-1 -- no need for tonumber()
  if index==PstID or index == PstID-50 then -- convert the Preset Number
@@ -142,23 +154,29 @@ local index = i-1 -- no need for tonumber()
 	panel:getLabel("lblProgramChanges"):setText(PstSpecName)-- or just setText(v[2])
  end -- if
 end -- for
+```
+
 Probably faster?
 
 Didn’t know about %02d!
 
 PS
 
-
+```lua
 local Preset1UnitRamName={[00] = "Vocal Plate 1",...}
 local Preset1UnitRomName={[50] = "Small Room Rev",...}
+```
+
 if you used a hash table, you would have had to declare it like this:
 
-
+```lua
 local Preset1UnitRamName={["00"] = "Vocal Plate 1",...}
 local Preset1UnitRomName={["50"] = "Small Room Rev",...}
+```
+
 If you’re just updating labels, the order of the loop probably doesn’t matter, so you could do it that way using pairs, but you need quotes around the irregular hash key name:
 
-
+```lua
 local Preset={["00"]="Vocal Plate 1",["50"]="Small Room Rev"}
 
 for k,v in pairs(Preset) do
@@ -170,12 +188,13 @@ if index==PstID or index == PstID-50 then -- convert the Preset Number
 
  end -- if
 end -- for
+```
 So using pairs is probably the most straightforward.
 
 Regards,
 
 
-damien
+### damien
 
 Everything is fine this is because what I paste in my previous post was not the whole script:
 
@@ -184,15 +203,16 @@ I have other statements beforehand :
 first I defined the presets name in tables according if they use 1DSP 2DSP and so on and if they are in ROM or RAM
 
 
-
+```lua
 Preset2UnitRamName={"00 ....
 Preset2UnitRomName={"50 ....
 Preset4UnitRamName={"00 ....
 Preset4UnitRamName={"50 ....
 ...
+```
 I created the different submenu for the popup and Then I populate the popup :
 
-
+```lua
 ...
 --	SUB MENU - 2U
 --	RAM
@@ -226,10 +246,12 @@ I created the different submenu for the popup and Then I populate the popup :
 	for i,v in ipairs(PresetConfigRomName) do
 		ConfigRomPreset:addItem(i+849, v, true, false, Image())
 	end -- for
-Then I decode the “itemReselultID” returned by the popup with show()
-bank is 1st number
-preset is 2&3 number
 
+```
+- Then I decode the “itemReselultID” returned by the popup with show()
+- bank is 1st number
+- preset is 2&3 number
+```lua
 --  FUNCTIONS REQUIRED FOR PRG CHANGE
 	local PstBank = tonumber(string.sub(itemResultID, 1,1))   -- Get bank number from #1 digit of the Popup Item selected
 	console("PstBank : "..(PstBank))
@@ -237,9 +259,10 @@ preset is 2&3 number
 	local PstID = tonumber(string.sub(itemResultID, 2,3))  -- Get bank number from #2 to #3 digit of the Popup Item selected
 	console("PstID : "..tostring(PstID))
 
+```
 Then I created the different messages to select the right banks on the machine before sending the midi program change for the selected preset. It’s required because the same prgr chg can send 5 different presets change. We need to tell the machine wich bank to change (1U, 2U, 4U, the config routing etc) beforhand:
 
-
+```lua
 --	PREPEND TO PRG CHANGE MESSAGE
 	local Src1ConfigChange = function()
 		SelectButton() -- Call Select Button Press/Release
@@ -263,10 +286,11 @@ Then I created the different messages to select the right banks on the machine b
 		SelectButton() -- Call Select Button Press/Release
 		ConfigButton() -- Call Select Config Press/Release
 	end
+```
 
-This is what you asked about, depending on the 1 number of the popup item, it changes the table containing the number of the preset and the preset name :
+- This is what you asked about, depending on the 1 number of the popup item, it changes the table containing the number of the preset and the preset name :
 
-
+```lua
 
 --  STATEMENTS RELATED TO BANK OF ITEM SELECTED
 	if PstBank == 1 then
@@ -294,9 +318,10 @@ This is what you asked about, depending on the 1 number of the popup item, it ch
 		PresetName = PresetConfigRomName
 		SrcConfigChange = ConfigChange
 	end
+```
 
-and after all that we send the right prgrm change message to the machine and update the different labels on ctrlr:
-
+- and after all that we send the right prgrm change message to the machine and update the different labels on ctrlr:
+```lua
 --	MIDI MESSAGE
 --  PRESET CHANGE FULL MESSAGE SEND
 
@@ -326,55 +351,95 @@ if PstID~=nil then -- check if PstId in not nil for click outside the popup
 	end -- for
 
 	os.execute(sleep(200))
-Once the whole instruction is sent to the machine we need to receive the settings of the differents new parameters for the requested preset:
+```
 
+- Once the whole instruction is sent to the machine we need to receive the settings of the differents new parameters for the requested preset:
 
+```lua
 panel:sendMidiMessageNow(CtrlrMidiMessage({0xf0, 0x0f, 0x40, 0x00, 0x00, 0x15, 0xf7}))
+```
+
 The message is received by ctrlr and the parameters are then updated.
 
 
-damien
+### damien
 
-That would have been easier if we could get the popupitem “itemText” directly.
+- That would have been easier if we could get the popupitem “itemText” directly.
+- And the +100, +150, +200 …added up to the index “i” of the preset number was a neat trick to distinguish one bank to call to another.
 
-And the +100, +150, +200 …added up to the index “i” of the preset number was a neat trick to distinguish one bank to call to another.
 
+### dnaldoog
 
-dnaldoog
-
-damien wrote:
-That would have been easier if we could get the popupitem “itemText” directly.
+> damien wrote:
+> That would have been easier if we could get the popupitem “itemText” directly.
 
 You could probably do this if everything was contained in a single lookup matrix table; kind of like a database, but you would have to do a full re-write re-design and if it’s already working there’s no need.
 
 
-damien
+### damien
 
-dnaldoog wrote:
-You could probably do this if everything was contained in a single lookup matrix table; kind of like a database, but you would have to do a full re-write re-design and if it’s already working there’s no need.
+> dnaldoog wrote:
+> You could probably do this if everything was contained in a single lookup matrix table; kind of like a database, but you would have to do a full re-write re-design and if it’s already working there’s no need.
 
 I thought about that last weekend, but it’s too late. I’ll do it for my next project from the early design. A big table and a loop like in php with while.
 
-So this topic is officially “solved” but I won’t edit the title, I’m too scared about losing all.
-My next step for this project is to manage sysex dumps in and out for loading/saving presets and banks as .syx files.
+- So this topic is officially “solved” but I won’t edit the title, I’m too scared about losing all.
+- My next step for this project is to manage sysex dumps in and out for loading/saving presets and banks as .syx files.
 Thank you once again for your precious help. This is priceless.
 
 
-dnaldoog
+### dnaldoog
 
 Hi Damien,
 
-I recently posted this ctrlr.org/forums/topic/how-i-can-create-a-sysex-file-from-table-on-panel/ about loading and saving lua tables to sysex files. There’s an example panel attachment there.
+- I recently posted this ctrlr.org/forums/topic/how-i-can-create-a-sysex-file-from-table-on-panel/ about loading and saving lua tables to sysex files. There’s an example panel attachment there.
+- You need to convert the table data into binary (MemoryBlock()).
+- The example below is tablecentric using lua loops, but you can also use MemoryBlock functions to do the same thing.
+
+```lua
+save_sysex_to_file = function(mod, value, source)
+
+local t={}
+
+t1={0xF0,0x41,0x01,0x00,0x01,0xF7} -- these are your 5 global
+t2={0xF0,0x41,0x02,0x00,0x02,0xF7} -- sysex tables
+t3={0xF0,0x41,0x03,0x00,0x03,0xF7} -- from somewhere in 
+t4={0xF0,0x41,0x04,0x00,0x04,0xF7} -- your program
+t5={0xF0,0x41,0x05,0x00,0x05,0xF7}
+
+local mergeTable={t1,t2,t3,t4,t5} -- make a table of tables!
+
+for _,v in ipairs (mergeTable) do
+for _,val in ipairs (v) do
+table.insert(t,val)
+end -- inner loop
+end -- populate a temp table t with all values
+
+--console(String(table.concat(t,',')))
+
+local dataToSave=MemoryBlock.fromLuaTable(t) -- create MemoryBlock from table
+
+--console(String(dataToSave:toHexString(1)))
+
+   file = utils.saveFileWindow ("Save file",File.getSpecialLocation(File.userDesktopDirectory), "*.syx", true)
+    if file:hasWriteAccess() then
+      file:replaceWithData(dataToSave)
+    end
+
+end --end function
+```
 
 Regards,
 
 JG
 
 
-damien
+### damien
 
 Hi JG,
+
 Your post is absolutely on point, I’ll study this chapter this weekend I am really looking forward to working on that.
+
 Thanks a lot
 Damien
 

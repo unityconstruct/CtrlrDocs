@@ -1,4 +1,6 @@
-Godlike-Productions
+## blog-55-lua-json
+
+### Godlike-Productions
 1 maart 2021
 
 I'm not sure if anyone has saved panel data to json. json.encode is supposed to encode tables, but I'm wondering if this will also encode memoryBlocks containing sysex data, for example. It doesn't explicitly say whether it does or doesn't.
@@ -10,11 +12,12 @@ The index in those are used to reference an underlying class set up as a table.
 
 patchBank is a table of patches
 A patch is set up as follows
-
+```lua
 patch.name (String)
 patch.author (String)
 patch.category (String)
 patch.sysex (memoryBlock)
+```
 
 I want to be able to export patchbank and load it back in. The sysex dump for the synth does not support the name, author or category, so to be able to preserve that info, I need to export the entire patchBank.
 
@@ -24,10 +27,10 @@ I'm looking for a structured way to save this, so json or xml is probably the pr
 
 Doing a bit of searching, json doesn't support binary data. It will either need to be encoded with toBase64 or toHexString
 
-----
 Ugh. json4lua isn't working. Line 380 throws this error
-
+```
 ERROR: [string "json4lua"]:380: attempt to index local 's' (a number value)
+```
 
 Probably because the output of toHexString, while it type command gives String, I suspect json.encode thinks it's a number to it stops.
 
@@ -40,23 +43,25 @@ Soooo, my options are to convert all the structures to text and build a method t
 I thought this was going to be an easy part of the build.
 
 
-dnaldoog
+### dnaldoog
 
 In my Juno Alpha panel there are two methods:
-
+```lua
     load_cc_mapping_from_file
     save_cc_mapping_to_file.
+```
 
 They might give clues as to how to create a record with a text file with your own custom extension.
 
 I create a lua table structure and save to file and just read it back in when loaded. I have my own file extension .JUMP Here is an example of the file contents:
 
-
+```lua
 restore={
 ["DCO_ENV_MODE"]={positionint=1,ccValue=0},
 ["HPF_CUTOFF_FREQ"]={positionint=10,ccValue=8},
 ["DCO_ENV_MOD_DEPTH"]={positionint=13,ccValue=3},
 }
+```
 
 You could just save the sysex as one string in the multi dimensional array. Reading it back into a MemoryBlock would be trivial!
 I think MacOS and Linux users would need to explicitly add the file extension. Windows prompts for it automatically.
@@ -64,7 +69,7 @@ I think MacOS and Linux users would need to explicitly add the file extension. W
 -----------
 Also, do you know about
 
-
+```lua
 --
 -- Called when data needs saving
 --
@@ -77,6 +82,7 @@ save_state = function(--[[ ValueTree --]] stateData)
 -- Called when data is restored
 --
 load_state = function(--[[ ValueTree --]] stateData)
+```
 
 
 I worked out a way to save lua tables and recall them on panel reload. It's in that panel too
@@ -85,69 +91,44 @@ They can save anything including variable names as key value pairs (not unlike J
 
 
 
-Godlike-Productions
-
+### Godlike-Productions
 
 
 I think I solved my problem
-
-
+```
 >>> tmpTable = {0xf0, 0x01, 0xf7}
-
 >>> tmpMB = MemoryBlock()
-
 >>> tmpMB:createFromTable(tmpTable)
-
 >>> tmpPatch1 = patch:new({name = "Name 1", author = "Author 1", category = "Bass", sysex = tmpMB})
-
 >>> tmpPatch2 = patch:new({name = "Name 2", author = "Author 2", category = "Lead", sysex = tmpMB})
-
 >>> tmpBank = patchBank:new()
-
 >>> tmpBank[1] = tmpPatch1
-
 >>> tmpBank[2] = tmpPatch2
-
 >>> expBank = tmpBank
-
 >>> console (Sting(expBank[1].name))
 ERROR: [string "_runtime"]:1: attempt to call global 'Sting' (a nil value)
-
 >>> console (String(expBank[1].name))
 Name 1
-
 >>> expTable = {}
-
 >>> tmpString1 = expBank[1].name..","..expBank[1].author..","..expBank[1].category..",{"..expBank[1].sysex:toHexString(1).."}"
-
 >>> console (tmpString1)
 Name 1,Author 1,Bass,{f0 01 f7}
-
 >>> tmpString2 = expBank[2].name..","..expBank[2].author..","..expBank[2].category..",{"..expBank[2].sysex:toHexString(1).."}"
-
 >>> expTable[1] = tmpString1
-
 >>> expTable[2] = tmpString2
-
 >>> tmpJson = json.encode(expTable)
-
 >>> console (String(tmpJson))
 ["Name 1,Author 1,Bass,{f0 01 f7}","Name 2,Author 2,Lead,{f0 01 f7}"]
-
 >>> ldTable = json.decode(tmpJson)
-
 >>> console (ldTable[1])
 Name 1,Author 1,Bass,{f0 01 f7}
+```
 
-
-
-Godlike-Productions
-
+### Godlike-Productions
 
 Yeah, I just need to rebuild the data from the string.
-
 This is the last bit I need for rebuilding it. Just puting it here so I can code it tomorrow.
-
+```
 >>> console (ldTable[1])
 Name 1,Author 1,Bass,{f0 01 f7}
 
@@ -167,11 +148,11 @@ Bass
 
 >>> console (String(recMB:toHexString(1)))
 f0 01 f7
-
-
+```
 
 Even Nicer. I only need to convert the mb to a hexstring
 
+```
 >>> tmpStBank = tmpBank
 
 >>> tmpStBank[1].sysex = tmpStBank[1].sysex:toHexString(1)
@@ -193,6 +174,7 @@ ERROR: [string "_runtime"]:1: '=' expected near 'String'
 
 >>> console  (String(jsonVar2))
 [{"sysex":"f0 01 f7","author":"Author 1","name":"Name 1","category":"Bass"},{"sysex":"f0 01 f7","author":"Author 2","name":"Name 2","category":"Lead"}]
+```
 
 The decode should rebuild the table, then I can convert the hexString back to a MB.
 
@@ -202,7 +184,7 @@ That will work, and has the benefit of keeping the library human readable, and i
 Is this the correct way to use ipairs?
 
 Edit: Note that this encodeBank method also converts bankToEncode to a hexString - it's destructive. See the answer for the final non-destrutive method.
-
+```lua
 function encodeBank(bankToEncode)
 	-- This function takes a patchBank, such as libraryBank, converts the sysex MemoryBlocks to a Hex Strings and then encodes the structure
     -- to json and returns a json string that can be written to a file.
@@ -215,11 +197,11 @@ function encodeBank(bankToEncode)
     local encodedBank = json.encode(tempBank)
     return encodedBank
 end
-
-
+```
 
 This is the decode function. I haven't tested yet, but if they don't work, I'll come back and update them.
 
+```lua
 function decodeBank(jsonToDecode)
 		-- This function takes a json String previously encoded with encodeBank, and returns a patchBank
      
@@ -232,15 +214,15 @@ function decodeBank(jsonToDecode)
     
     return decodedBank
 end
+```
 
 
-dnaldoog
+### dnaldoog
 
 Looks OK to me. I haven’t tested it. Does it work? The ipairs syntax is correct.
 
 
-
-Godlike-Productions
+###  Godlike-Productions
 
 
 I think it works. It definately exports a valid json file, but I have a bug in my method for copying patches between banks (I have some options for whether to inject them at the start, middle or end of a bank, doing bulk author, name and category changes, and options to load the patches via sysex if we copy them into the Jupiter.). Author and Category aren't getting transferred properly and I haven't found out why yet.
@@ -270,7 +252,7 @@ I think the crash was caused by .getParentDirectory() I think there's a bug with
 
 
 OK, I've fixed it.
-
+```lua
 function encodeBank(bankToEncode)
 	-- This function takes a patchBank, such as libraryBank, converts the sysex MemoryBlocks to a Hex Strings and then encodes the structure
     -- to json and returns a json string that can be written to a file.
@@ -296,22 +278,24 @@ function encodeBank(bankToEncode)
     local encodedBank = json.encode(tempBank)
     return encodedBank
 end
+```
 
 I'll also update the method in the thread. This thread is getting a bit out of hand. I'll copy the final methods to the end, and try and mark it as the answer.
 
 
-dobo365
+### dobo365
 
 Very interesting about json coding/decoding as, as you say, it is readable!
 
 I have handled this with memoryblocks and 2 files, one containing the actual sysex of the synth, the other one the metadata but in fact you could do it with just one single sysex file. If you use only one then for sure you cannot send that one without processing to the synth and it is the reason I used 2.
 So, basically, I have:
-
-    single program sysex F0...F7
-    there is no single metadata file
-    bank file sysex = set of several hundreds of single program files
-    metadata bank file sysex = set of several hundreds of metadata
-    As I know the positions, it is "just" a matter of reading/writing at the position provided by the Midi documentation or at the ones I defined for the metadata.
+```
+single program sysex F0...F7
+there is no single metadata file
+bank file sysex = set of several hundreds of single program files
+metadata bank file sysex = set of several hundreds of metadata
+As I know the positions, it is "just" a matter of reading/writing at the position provided by the Midi documentation or at the ones I defined for the metadata.
+```
 
 
 
@@ -325,7 +309,7 @@ sysexToDump = addSysexHeader(programNumber,patchBank[i].sysex) You can make a ba
 
 
 
-dnaldoog
+### dnaldoog
 
 I worked out how to do it and it wasn't easy! See attached:
 
@@ -333,7 +317,7 @@ json experiment_2_0_0_2021-03-03_22-08.zip
 
 
 
-Godlike-Productions
+### Godlike-Productions
 
 
 I tried it, but it didn't work.
@@ -343,7 +327,7 @@ I get these errors when I try to save and then load.
 Nothing was written to the json file.
 
 I'm about to test my methods. I'll let you know how I go.
-
+```
 At line [-1]: [C]
 What: C
 Namewhat: method
@@ -364,8 +348,7 @@ What: C
 Namewhat: field
 Name: assert
 Error message: [string "json4lua"]:122: Unterminated JSON encoded object found at position in []
-
------------
+```
 
 Ugh, replaceWithText has changed in the ctrlr version I have. I'll try to get to the bottom of it.
 
@@ -373,20 +356,22 @@ Found the issue.
 
 This fixes it. Looks like the file constant isn't optional in v6
 
+```lua
 if fileToWrite:replaceWithText(str, false, false, ",") == false then
+```
 
 I still need to test my method. I've got a problem with my import sysex method somewhere. It's not keeping the sysex as a MemoryBlock, but changing it to a string. I need to find out why. Another rabbit hole to dive down.
 
 
-dnaldoog
+### dnaldoog
 
 Shouldn't be using version 6! Use 5.3.201 - even if 6* works in development it probably won't work for many users!
 
+```lua
 if fileToWrite:replaceWithText(str, false, false, ",") == false then can't be right, surely!
+```
 
-
-Godlike-Productions
-
+### Godlike-Productions
 
 I'm only releasing this panel as a restricted instance. v6 actually rescued this panel. It crashed in v 5.3 and couldn't be recovered. v6 just opened it up and I'm too far into it to change now.
 
@@ -396,10 +381,12 @@ That is just copy and pasted from your panel that I just ran successfully. It wi
 
 This is the text that is generated in the json from your example.
 
+```
 [{"name":"blah blah","sysex":"f0 01 f7"},{"name":"I am Jupiter","sysex":"f0 01 45 33 0a f7"},{"name":"I am Juno","sysex":"f0 02 45 33 0a 66 77 7f f7"}]
+```
 
 
-dnaldoog
+### dnaldoog
 
 It breaks on 5.3.201, it doesn't like the third parameter which exist in JUCE, but it is supposed to be either "\r" "\n".
 
@@ -409,15 +396,16 @@ Also, I'm pretty sure v 6 breaks when used as VST - Have you tested it as a stan
 
 https://docs.juce.com/master/classFile.html#afb6ed58d3dae457dc306c1f6d1bdf602
 
-
+```lua
 bool File::replaceWithText| (  const String &| textToWrite,
   bool asUnicode = false,
   boo writeUnicodeHeaderBytes = false,
   const char * lineEndings = "\r\n"
  )   const
+```
 
 
-Godlike-Productions
+### Godlike-Productions
 
 OK, that makes sense. I also tested with \n and it also worked. There are no eol's in the export, so that makes sense.
 
@@ -429,6 +417,7 @@ Just got to do my loading button now.
 
 This is the save code I ended up with.
 
+```lua
 function saveLibraryButtonMethod()
 	-- This is a manual save of the Library. We will use a different method for autosaving, because we don't want to prompt for 
     -- file location. All library files will be saved with a .jp8, but it will be json files.  We don't want to import any json files, as we don't
@@ -478,6 +467,7 @@ function saveLibraryButtonMethod()
 		    utils.warnWindow ("File write", "Failed to write data to file: "..fileToWrite.getFullPathName())
 	    end
 end
+```
 
 
 
@@ -486,7 +476,7 @@ Here's the load method.
 All tested and working.
 
 With json you MUST make sure there is no userdata. Strings, numbers and tables only.
-
+```lua
 function loadLibraryButtonMethod()
 	-- This method loads a .jp8 file (JSON format) and puts the data into the Library Table.
     -- There is a confirm box, because this is destructive (ie it will overwrite the old library)
@@ -548,17 +538,18 @@ function loadLibraryButtonMethod()
     end --if
 
 end
+```
 
-
-
-dnaldoog
+### dnaldoog
 
 Excellent!
 
 Just one note ⇒ "/n" should read "\n"
 
 This is going to be very useful. For example, you could save each modulator value panel:getModulatorByName("lfoRate"):getModulatorValue() i.e.
+```
 [{"mod":"lfoRate","value":"53},{"mod":"resonance","value":"31"} ]
+```
 
 either using Hex or Decimal for the values.
 
@@ -569,25 +560,26 @@ You could set up a lua set to determine which modulators to record.
 
 
 
-Godlike-Productions
+### Godlike-Productions
 
 Cheers, fixed it, in case any one copies and paste's in the future (probably me when I do my next panel :P)
 
 And yeah for collecting modulators. If you want to quickly go through all modulators use
-
+```lua
 n = panel:getNumModulators()
 
 for i=0,n-1 do
 mod = panel:getModulatorByIndex(i)
 end
+```
 
 
-Godlike-Productions
+### Godlike-Productions
 
 😏️OK - THE THREAD HAS GOT A BIT MESSY. HERE'S THE 4 FINAL METHODS I ENDED UP WITH.😏️
 
 ENCODE BANK
-
+```lua
 function encodeBank(bankToEncode)
 	-- This function takes a patchBank, such as libraryBank, converts the sysex MemoryBlocks to a Hex Strings and then encodes the structure
     -- to json and returns a json string that can be written to a file.
@@ -613,9 +605,11 @@ function encodeBank(bankToEncode)
     local encodedBank = json.encode(tempBank)
     return encodedBank
 end
+```
 
-DECODE BANK
+### DECODE BANK
 
+```lua
 function decodeBank(jsonToDecode)
 		-- This function takes a json String previously encoded with encodeBank, and returns a patchBank
      
@@ -628,9 +622,11 @@ function decodeBank(jsonToDecode)
     
     return decodedBank
 end
+```
 
-SAVE LIBRARY (EXPORT JSON)
+### SAVE LIBRARY (EXPORT JSON)
 
+```lua
 function saveLibraryButtonMethod()
 	-- This is a manual save of the Library. We will use a different method for autosaving, because we don't want to prompt for 
     -- file location. All library files will be saved with a .jp8, but it will be json files.  We don't want to import any json files, as we don't
@@ -680,9 +676,11 @@ function saveLibraryButtonMethod()
 		    utils.warnWindow ("File write", "Failed to write data to file: "..fileToWrite.getFullPathName())
 	    end
 end
+```
 
-LOAD LIBRARY (JSON)
+### LOAD LIBRARY (JSON)
 
+```lua
 function loadLibraryButtonMethod()
 	-- This method loads a .jp8 file (JSON format) and puts the data into the Library Table.
     -- There is a confirm box, because this is destructive (ie it will overwrite the old library)
@@ -744,9 +742,10 @@ function loadLibraryButtonMethod()
     end --if
 
 end
+```
 
 YOU WILL ALSO NEED THE FOLLOWING DECLARED IN YOUR INITIALIZEPANEL. THIS BUILDS THE PATCH CLASS AND THE PATCHBANK CLASS.
-
+```lua
 -- Intialize Classes
 defaultSysex = {0xf0,0x00,0x00,0x2f,0x03,0x02,0x00,0x00,0x00,0x00,0x00,0x09,0x00,0x0c,0x00,0x00,0x00,0x00,0x0b,0x02,0x06,0x02,0x0f,0x0f,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x0f,0x0f,0x00,0x00,0x09,0x0c,0x00,0x00,0x00,0x00,0x08,0x08,0x00,0x00,0x02,0x0c,0x01,0x07,0x0f,0x07,0xf7}
 defaultSysexMB = MemoryBlock()
@@ -766,5 +765,6 @@ function patchBank:new(o)
     self.__index = self
     return o
 end
+```
 
 
