@@ -1,6 +1,6 @@
 ## blog-12-DemoHumanFlyTrax.md
 
-Demo panel for MIDI receive/transmit routines
+### Demo panel for MIDI receive/transmit routines
 
 
 ### human fly
