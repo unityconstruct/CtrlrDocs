@@ -1,37 +1,33 @@
+# Component
 
->>> what(panel:getComponent("Noise Type"))
-Object type [CtrlrCombo]
+>>> what(panel:getCanvas():getParentComponent())
+Object type [Component]
 -----------------------------------------------------------------
 
 Members:
 	                      getRight:	function
-	             getPropertyDouble:	function
 	      copyAllExplicitColoursTo:	function
 	                   focusGained:	function
 	    setRepaintsOnMouseActivity:	function
 	                setMouseCursor:	function
-	                    getMaximum:	function
-	              setComponentText:	function
 	              isFocusContainer:	function
 	        parentHierarchyChanged:	function
 	                     isVisible:	function
 	         setExplicitFocusOrder:	function
-	                    keyPressed:	function
+	                      getAlpha:	function
 	             setCentreRelative:	function
-	                removeProperty:	function
 	          removeChildComponent:	function
 	                getComponentAt:	function
-	            localPointToGlobal:	function
+	                       mouseUp:	function
 	canModalEventBeSentToComponent:	function
-	      minimisationStateChanged:	function
+	         isMouseOverOrDragging:	function
 	                setComponentID:	function
-	                      getOwner:	function
+	             localAreaToGlobal:	function
 	                    findColour:	function
 	             setFocusContainer:	function
 	                      setAlpha:	function
 	                getComponentID:	function
 	  isBroughtToFrontOnMouseClick:	function
-	                         click:	function
 	                         paint:	function
 	            lookAndFeelChanged:	function
 	             visibilityChanged:	function
@@ -40,28 +36,23 @@ Members:
 	  focusOfChildComponentChanged:	function
 	                     isEnabled:	function
 	            getParentComponent:	function
-	                  getLuaBounds:	function
 	                          getX:	function
-	             removeAllChildren:	function
+	                     setColour:	function
 	            getMouseXYRelative:	function
 	      getInterceptsMouseClicks:	function
 	          getParentMonitorArea:	function
 	         getWantsKeyboardFocus:	function
 	                       setSize:	function
-	          getSelectedItemIndex:	function
-	             setPropertyColour:	function
+	                       hitTest:	function
+	                   isOnDesktop:	function
 	                    getScreenY:	function
 	               childrenChanged:	function
 	            setTopLeftPosition:	function
 	               keyStateChanged:	function
 	      setInterceptsMouseClicks:	function
-	          setSelectedItemIndex:	function
-	                       getRect:	function
 	             setCentrePosition:	function
 	             getChildComponent:	function
-	                       setText:	function
 	         getExplicitFocusOrder:	function
-	                       getText:	function
 	                     setOpaque:	function
 	                 colourChanged:	function
 	                       repaint:	function
@@ -73,137 +64,113 @@ Members:
 	            childBoundsChanged:	function
 	          getTopLevelComponent:	function
 	setMouseClickGrabsKeyboardFocus:	function
-	              getOwnedComboBox:	function
+	                    getScreenX:	function
 	        setPaintingIsUnclipped:	function
 	      getIndexOfChildComponent:	function
 	                      contains:	function
-	                    getScreenX:	function
 	                 getLocalPoint:	function
 	                reallyContains:	function
-	         getComponentMidiValue:	function
+	                 getProperties:	function
 	                     mouseDrag:	function
-	             removeFromDesktop:	function
-	             getBoundsInParent:	function
 	                centreWithSize:	function
-	                getMouseCursor:	function
-	             grabKeyboardFocus:	function
+	                 setPositioner:	function
 	                    setVisible:	function
 	             addAndMakeVisible:	function
 	    moveKeyboardFocusToSibling:	function
-	                 isAlwaysOnTop:	function
+	             getScreenPosition:	function
 	             isMouseButtonDown:	function
 	        userTriedToCloseWindow:	function
-	                 setSelectedId:	function
-	                    mouseEnter:	function
-	                setLookAndFeel:	function
 	            setBufferedToImage:	function
 	isCurrentlyBlockedByAnotherModalComponent:	function
-	                       hitTest:	function
 	           removeMouseListener:	function
-	         inputAttemptWhenModal:	function
 	                     isShowing:	function
-	             enablementChanged:	function
-	            setComponentEffect:	function
 	          handleCommandMessage:	function
-	             localAreaToGlobal:	function
 	                 getPositioner:	function
-	                       mouseUp:	function
-	         setComponentMidiValue:	function
-	                 getSelectedId:	function
+	         inputAttemptWhenModal:	function
 	                     getBounds:	function
-	             isColourSpecified:	function
-	         sendLookAndFeelChange:	function
+	          addComponentListener:	function
 	                      isOpaque:	function
 	                mouseWheelMove:	function
-	                      toBehind:	function
+	            setComponentEffect:	function
 	                getLookAndFeel:	function
-	                getParentWidth:	function
-	                      getAlpha:	function
 	            getComponentEffect:	function
-	              addChildAndSetID:	function
-	                     setColour:	function
 	                     setBounds:	function
-	             updateMouseCursor:	function
 	                setBoundsInset:	function
-	                getPropertyInt:	function
-	                    getMinimum:	function
-	                    setEnabled:	function
-	                setBoundsToFit:	function
 	                exitModalState:	function
 	             addChildComponent:	function
-	              addMouseListener:	function
 	                       toFront:	function
-	                  setMidiValue:	function
 	         getNumChildComponents:	function
 	                     getHeight:	function
 	                       setName:	function
-	                  getMidiValue:	function
 	           modifierKeysChanged:	function
 	              mouseDoubleClick:	function
-	         setWantsKeyboardFocus:	function
-	                        toBack:	function
-	 setBroughtToFrontOnMouseClick:	function
-	             getScreenPosition:	function
-	                     getBottom:	function
-	                         moved:	function
-	                   getProperty:	function
+	                    setEnabled:	function
+	             removeFromDesktop:	function
+	             getBoundsInParent:	function
+	       createComponentSnapshot:	function
+	             removeAllChildren:	function
+	             setBoundsRelative:	function
 	              hasKeyboardFocus:	function
-	                   setProperty:	function
-	                        __init:	function
-	             removeKeyListener:	function
-	                 setPositioner:	function
-	             paintOverChildren:	function
+	                   isMouseOver:	function
+	                     focusLost:	function
+	          paintEntireComponent:	function
+	            proportionOfHeight:	function
+	           setTopRightPosition:	function
 	             proportionOfWidth:	function
-	                   getValueMap:	function
-	                      getValue:	function
-	             setPropertyString:	function
+	                   getPosition:	function
+	         setWantsKeyboardFocus:	function
+	             isColourSpecified:	function
 	                    getMarkers:	function
 	          createFocusTraverser:	function
-	                     focusLost:	function
-	                   getPosition:	function
+	                getMouseCursor:	function
+	                    mouseEnter:	function
 	                  removeColour:	function
-	                  getLocalArea:	function
-	                     mouseMove:	function
-	           setTopRightPosition:	function
-	            proportionOfHeight:	function
+	                getParentWidth:	function
+	                      toBehind:	function
+	              addChildAndSetID:	function
+	                        __init:	function
 	                  addToDesktop:	function
 	       setCachedComponentImage:	function
-	             getPropertyString:	function
+	                     mouseMove:	function
 	       removeComponentListener:	function
 	                 isTransformed:	function
-	                setPropertyInt:	function
-	                 getObjectTree:	function
-	                      setValue:	function
-	                addKeyListener:	function
-	             setBoundsRelative:	function
+	             updateMouseCursor:	function
+	                    keyPressed:	function
+	             paintOverChildren:	function
+	             enablementChanged:	function
+	            localPointToGlobal:	function
 	                    isParentOf:	function
-	                  setTransform:	function
+	                         moved:	function
 	            postCommandMessage:	function
-	             parentSizeChanged:	function
-	               getTextForValue:	function
-	          paintEntireComponent:	function
-	       getCachedComponentImage:	function
-	          addComponentListener:	function
-	                   isOnDesktop:	function
-	                 getProperties:	function
-	             getComponentValue:	function
+	                setBoundsToFit:	function
+	 setBroughtToFrontOnMouseClick:	function
+	              addMouseListener:	function
+	                        toBack:	function
+	                addKeyListener:	function
+	                  setTransform:	function
+	                     getBottom:	function
+	             removeKeyListener:	function
 	                     mouseDown:	function
 	                      getWidth:	function
 	                       resized:	function
-	             setComponentValue:	function
+	                  getLocalArea:	function
 	                broughtToFront:	function
-	              getComponentText:	function
-	          setCustomLookAndFeel:	function
+	             grabKeyboardFocus:	function
+	                 isAlwaysOnTop:	function
 	                       getPeer:	function
-	         isMouseOverOrDragging:	function
-	                   isMouseOver:	function
+	      minimisationStateChanged:	function
+	         sendLookAndFeelChange:	function
 	                  getTransform:	function
 	                setAlwaysOnTop:	function
 	               enterModalState:	function
 	              isCurrentlyModal:	function
 	                     mouseExit:	function
 	             deleteAllChildren:	function
-	       createComponentSnapshot:	function
-	             setPropertyDouble:	function
-	                  setLuaBounds:	function
- 
+	       getCachedComponentImage:	function
+	             parentSizeChanged:	function
+	                setLookAndFeel:	function
+
+
+Attributes:
+
+-----------------------------------------------------------------

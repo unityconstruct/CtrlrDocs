@@ -182,7 +182,7 @@
 | componentVisibility | Is component visible | Bool |
 | componentLayerUid | Component layer ID | ReadOnly |
 | componentAlpha | Component Alpha | Numeric [max="255" min="0" int="1"] |
-| componentEffect | Component effect | VarNumeric [defaults="@imageEffect |
+| componentEffect | Component effect | VarNumeric [defaults="@imageEffect"] |
 | componentEffectRadius | Component effect radius | Numeric [min="0.5" max="255" int="0.1"] |
 | componentEffectColour | Component effect colour | Colour |
 | componentEffectOffsetX | Component effect offset X (shadow) | Numeric [max="255" int="0.1"] |
@@ -869,6 +869,7 @@
 | luaPanelMidiSnapshotPre | Called before a MIDI snapshot is sent | LuaMethod |
 | luaPanelMidiSnapshotPost | Called after a MIDI snapshot has been sent | LuaMethod |
 
+## Process
 | id | text | type |
 | - | - | - |
 | luaTransProcess | Transaction process | LuaMethod |
