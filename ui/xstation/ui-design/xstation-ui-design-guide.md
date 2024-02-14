@@ -199,7 +199,398 @@ end
 
 
 
+![midmMultiMessage](xstation-ui-midi-01-messagemultilist-form-field.png)
 
+
+
+
+
+### CtrlrMidiMessage::valueTreePropertyChanged [CtrlrMidiMessage.cpp]
+
+
+```lua
+void CtrlrMidiMessage::valueTreePropertyChanged (ValueTree &treeWhosePropertyHasChanged, const Identifier &property)
+	else if (property == Ids::midiMessageMultiList)
+	{
+		CtrlrSysexProcessor::setMultiMessageFromString (*this, getProperty(Ids::midiMessageMultiList));
+
+		setNumber ((int)getProperty(Ids::midiMessageCtrlrNumber));
+	}
+
+```
+
+
+### CtrlrSysexProcessor::setMultiMessageFromString [CtrlrSysexProcessor.cpp]
+```lua
+void CtrlrSysexProcessor::setMultiMessageFromString(CtrlrMidiMessage &message, const String &savedState)
+{
+	if (savedState.trim() == "")
+		return;
+
+	StringArray messages;
+	const int ch = message.getChannel();
+	const int v  = message.getValue();
+	const int n  = message.getNumber();
+
+	message.getMidiMessageArray().clear();
+	messages.addTokens (savedState.trim(), ":", "\"\'");
+
+	for (int i=0; i<messages.size(); i++)
+	{
+		message.getMidiMessageArray().add (midiMessageExfromString (messages[i], ch, n, v));
+	}
+}
+```
+
+https://vscode.dev/github/inteyes/X-Station-Voice-Editor/blob/main_basics/midi/juce_MidiMessage.cpp#L674
+
+
+https://vscode.dev/github/inteyes/X-Station-Voice-Editor/blob/main_basics/midi/juce_MidiMessage.cpp#L684
+
+
+midiMessageMultiList
+
+```lua
+void CtrlrMidiMessage::valueTreePropertyChanged (ValueTree &treeWhosePropertyHasChanged, const Identifier &property)
+{
+	if (property == Ids::midiMessageType)
+	{
+		setMidiMessageType ((CtrlrMidiMessageType)(int)getProperty(Ids::midiMessageType));
+		setNumber ((int)getProperty(Ids::midiMessageCtrlrNumber));
+		patternChanged();
+	}
+	else if(property == Ids::midiMessageSysExFormula)
+	{
+		if (restoring == false && (int)getProperty(Ids::midiMessageType) == SysEx)
+		{
+			if (getProperty(property).toString().length() >= 1)
+			{
+				if (getSysexProcessor())
+				{
+					CtrlrSysexProcessor::setSysExFormula (*this, getProperty(Ids::midiMessageSysExFormula));
+				}
+				setValue ((int)getProperty(Ids::midiMessageCtrlrValue));
+				patternChanged();
+			}
+		}
+	}
+	else if (property == Ids::midiMessageChannel)
+	{
+		setChannel (getProperty(Ids::midiMessageChannel));
+	}
+	else if (property == Ids::midiMessageCtrlrValue)
+	{
+		setValue ((int)getProperty(Ids::midiMessageCtrlrValue));
+		return;
+	}
+	else if (property == Ids::midiMessageCtrlrNumber)
+	{
+		setNumber ((int)getProperty(Ids::midiMessageCtrlrNumber));
+	}
+	else if (property == Ids::midiMessageMultiList)
+	{
+		CtrlrSysexProcessor::setMultiMessageFromString (*this, getProperty(Ids::midiMessageMultiList));
+
+		setNumber ((int)getProperty(Ids::midiMessageCtrlrNumber));
+	}
+
+	patternChanged();
+}
+```
+
+
+### CtrlrSysexProcessor::setMultiMessageFromString [CtrlrSysexProcessor.cpp]
+
+```lua
+void CtrlrSysexProcessor::setMultiMessageFromString(CtrlrMidiMessage &message, const String &savedState)
+{
+	if (savedState.trim() == "")
+		return;
+
+	StringArray messages;
+	const int ch = message.getChannel();
+	const int v  = message.getValue();
+	const int n  = message.getNumber();
+
+	message.getMidiMessageArray().clear();
+	messages.addTokens (savedState.trim(), ":", "\"\'");
+
+	for (int i=0; i<messages.size(); i++)
+	{
+		message.getMidiMessageArray().add (midiMessageExfromString (messages[i], ch, n, v));
+	}
+}
+```
+
+
+### CtrlrMidiMessageEx::getValue [CtrlrMidiMessageEx.cpp]
+
+```lua
+int CtrlrMidiMessageEx::getValue() const
+{
+	if (m.isNoteOff() || m.isNoteOn())
+	{
+		return (getValueInternal(m.getVelocity()));
+	}
+	else if (m.isController())
+	{
+		return (getValueInternal(m.getControllerValue()));
+	}
+	else if (m.isChannelPressure())
+	{
+		return (getValueInternal(m.getChannelPressureValue()));
+	}
+	else if (m.isAftertouch())
+	{
+		return (getValueInternal(m.getAfterTouchValue()));
+	}
+	else if (m.isProgramChange())
+	{
+		return (getValueInternal(m.getProgramChangeNumber()));
+	}
+	else if (m.isPitchWheel())
+	{
+		return (getValueInternal(m.getPitchWheelValue()));
+	}
+	return (-1);
+}
+
+```
+
+
+## CtrlrMidiMessageEx::getNumber [CtrlrMidiMessageEx.cpp]
+
+```lua
+int CtrlrMidiMessageEx::getNumber() const
+{
+	if (m.isNoteOff() || m.isNoteOn() || m.isAftertouch())
+	{
+		return (getNumberInternal(m.getNoteNumber()));
+	}
+	else if (m.isController())
+	{
+		return (getNumberInternal(m.getControllerNumber()));
+	}
+	else if (m.isProgramChange())
+	{
+		return (getNumberInternal(m.getProgramChangeNumber()));
+	}
+
+	return (-1);
+}
+```
+
+## StringArray::addTokens [CtrlrSysexProcessor.cpp]
+```lua
+int StringArray::addTokens (StringRef text, StringRef breakCharacters, StringRef quoteCharacters)
+{
+    int num = 0;
+
+    if (text.isNotEmpty())
+    {
+        for (auto t = text.text;;)
+        {
+            auto tokenEnd = CharacterFunctions::findEndOfToken (t,
+                                                                breakCharacters.text,
+                                                                quoteCharacters.text);
+            strings.add (String (t, tokenEnd));
+            ++num;
+
+            if (tokenEnd.isEmpty())
+                break;
+
+            t = ++tokenEnd;
+        }
+    }
+
+    return num;
+}
+```
+
+
+## CtrlrMidiMessageEx midiMessageExfromString [CtrlrUtilities.cpp]
+```lua
+const CtrlrMidiMessageEx midiMessageExfromString (const String &str, const int ch, const int number, const int value)
+{
+	CtrlrMidiMessageEx ret;
+	StringArray tokens;
+
+	tokens.addTokens (str, ",", "\"\'");
+
+	if (tokens.size() >= 5)
+	{
+		ret.indirectNumberFlag	= indirectFromString (tokens[1]);
+		ret.indirectValueFlag	= indirectFromString (tokens[2]);
+		ret.overrideNumber		= tokens[3].getIntValue();
+		ret.overrideValue		= tokens[4].getIntValue();
+
+		if (tokens[0] == "CC")
+			ret.m				= MidiMessage::controllerEvent (ch,number,value);
+		if (tokens[0] == "Aftertouch")
+			ret.m				= MidiMessage::aftertouchChange (ch,number,value);
+		if (tokens[0] == "NoteOn")
+			ret.m				= MidiMessage::noteOn (ch,number,(uint8)value);
+		if (tokens[0] == "NoteOff")
+			ret.m				= MidiMessage::noteOff (ch,number,(uint8)value);
+		if (tokens[0] == "ChannelPressure")
+			ret.m				= MidiMessage::channelPressureChange (ch,value);
+		if (tokens[0] == "ProgramChange")
+			ret.m				= MidiMessage::programChange(ch,value);
+
+		if (tokens[0] == "SysEx")
+		{
+			return (CtrlrSysexProcessor::sysexMessageFromString(tokens[5], value, ch));
+		}
+
+		ret.setNumber(number);
+		ret.setValue(value);
+		return (ret);
+	}
+	else
+	{
+	    jassertfalse; // Looks like there is not enough tokens to create a CtrlrMidiMessageEx object
+		return (CtrlrMidiMessageEx());
+	}
+}
+```
+
+## juce_MidiMessage.h
+```lua
+
+    /** Creates a controller message.
+        @param channel          the midi channel, in the range 1 to 16
+        @param controllerType   the type of controller
+        @param value            the controller value
+        @see isController
+    */
+    static MidiMessage controllerEvent (int channel,
+                                        int controllerType,
+                                        int value) noexcept;
+
+```
+
+## MidiMessage::controllerEvent [juce_MidiMessage.cpp]
+
+```lua
+MidiMessage MidiMessage::controllerEvent (const int channel, const int controllerType, const int value) noexcept
+{
+    // the channel must be between 1 and 16 inclusive
+    jassert (channel > 0 && channel <= 16);
+
+    return MidiMessage (MidiHelpers::initialByte (0xb0, channel),
+                        controllerType & 127, value & 127);
+}
+```
+
+
+## MidiMessage::MidiMessage [juce_MidiMessage.ccp]
+
+```lua
+namespace juce
+{
+
+namespace MidiHelpers
+{
+    inline uint8 initialByte (const int type, const int channel) noexcept
+    {
+        return (uint8) (type | jlimit (0, 15, channel - 1));
+    }
+
+    inline uint8 validVelocity (const int v) noexcept
+    {
+        return (uint8) jlimit (0, 127, v);
+    }
+}
+...
+}
+```
+
+
+## MidiMessage::MidiMessage [juce_MidiMessage.ccp]
+```lua
+MidiMessage::MidiMessage (MidiMessage&& other) noexcept
+   : timeStamp (other.timeStamp), size (other.size)
+{
+    packedData.allocatedData = other.packedData.allocatedData;
+    other.size = 0;
+}
+
+```
+
+
+
+
+
+
+
+```lua
+const CtrlrMidiMessageEx midiMessageExfromString (const String &str, const int ch, const int number, const int value)
+{
+	CtrlrMidiMessageEx ret;
+	StringArray tokens;
+
+	tokens.addTokens (str, ",", "\"\'");
+
+	if (tokens.size() >= 5)
+	{
+		ret.indirectNumberFlag	= indirectFromString (tokens[1]);
+		ret.indirectValueFlag	= indirectFromString (tokens[2]);
+		ret.overrideNumber		= tokens[3].getIntValue();
+		ret.overrideValue		= tokens[4].getIntValue();
+
+		if (tokens[0] == "CC")
+			ret.m				= MidiMessage::controllerEvent (ch,number,value);
+		if (tokens[0] == "Aftertouch")
+			ret.m				= MidiMessage::aftertouchChange (ch,number,value);
+		if (tokens[0] == "NoteOn")
+			ret.m				= MidiMessage::noteOn (ch,number,(uint8)value);
+		if (tokens[0] == "NoteOff")
+			ret.m				= MidiMessage::noteOff (ch,number,(uint8)value);
+		if (tokens[0] == "ChannelPressure")
+			ret.m				= MidiMessage::channelPressureChange (ch,value);
+		if (tokens[0] == "ProgramChange")
+			ret.m				= MidiMessage::programChange(ch,value);
+
+		if (tokens[0] == "SysEx")
+		{
+			return (CtrlrSysexProcessor::sysexMessageFromString(tokens[5], value, ch));
+		}
+
+		ret.setNumber(number);
+		ret.setValue(value);
+		return (ret);
+	}
+	else
+	{
+	    jassertfalse; // Looks like there is not enough tokens to create a CtrlrMidiMessageEx object
+		return (CtrlrMidiMessageEx());
+	}
+}
+
+```
+
+
+```lua
+MidiMessage MidiMessage::createSysExMessage (const void* sysexData, const int dataSize)
+{
+    HeapBlock<uint8> m (dataSize + 2);
+
+    m[0] = 0xf0;
+    memcpy (m + 1, sysexData, (size_t) dataSize);
+    m[dataSize + 1] = 0xf7;
+
+    return MidiMessage (m, dataSize + 2);
+}
+```
+
+
+
+
+
+- .panel for XML saved panels
+- .panelz for XML saved panels that are compressed
+- .bpanel for binary saved panels
+- .bpanelz for binary saved panels that are compressed
 
 
 <!-- this style is NOT honored on github, but is a local IDEs -->
