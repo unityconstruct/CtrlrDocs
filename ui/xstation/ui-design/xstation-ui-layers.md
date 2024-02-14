@@ -1,14 +1,14 @@
 # xstation ui design
 
-<style type="text/css">.red{color:red;font-size:16px; background-color:#111111} </style>
 
-# Using UI Layers to simplify layout design, while maintaining flexible visibity settings
+
+## Using UI Layers to simplify layout design, while maintaining flexible visibity settings
 
 | Layer | Name | Function  | Description |
 | -- | -- | -- | -- |
 | 0 | Background | Background  | Main background image or color. Most will be covered up, so good place for panel `bezel` graphics, branding or border-placed logos |
-| 1 | PanelLayout | Level-1A UI  | Level1 Panel partitioning & sections. NO controls, only visual aids helping user identify groups of controls in an intuitive way.  |
-| 2 | OverlayImage |  Level-1B UI | Level1 Panel Depth/Overlay for 'hovering' logos, and additional panel elements for any complex visuals |
+| 1 | PanelLayout | Level-1B UI  | Level1 Panel partitioning & sections. NO controls, only visual aids helping user identify groups of controls in an intuitive way.  |
+| 2 | OverlayImage |  Level-1A UI | Level1 Panel Depth/Overlay for 'hovering' logos, and additional panel elements for any complex visuals |
 | 3 | Controls | Level-1 Controls | Level1 Controls ONLY. NO UI elements. |
 | 4 | AdditionalLayout | Level-2 UI | Level2 Panel sections that will be stacked on TOP of Level1 assets |
 | 5 | AdditionalControls | Level-2 Controls  | Level2 Panel Controls ONLY. NO UI elements.  |
@@ -32,7 +32,22 @@ Note: Ensure All layers visible by default(and when exporting!)?? Will objects i
 
 
 
+### Lua Editor
+- all custom lua code will be placed in the editor
+- the folder structure and names seem arbitrary to some extent, but why make it confusing:
+  - for dedicated functions (ie: used once in the CtrlrPanelPropertyEditor only once)
+    - set its name to match the property value: ie: `luaPanelLoaded()`
+	- optionally, prefix the name with the Component's anme
 
+![lua-editor](xstation-ui-lua-code-01-lua-editor.png)
+
+- create a `new function`(ie `method`), by clicking 
+
+![lua-editor](xstation-ui-lua-code-04-create-edit-function.png)
+
+
+<!-- ![create new function](xstation-ui-lua-code-02-create-new-function.png)
+![create new function](xstation-ui-lua-code-03-add-new-method-dialog.png) -->
 
 
 
@@ -41,13 +56,13 @@ Note: Ensure All layers visible by default(and when exporting!)?? Will objects i
 
 ### UI<->LuaMethods Panel Wiring: Start-Up
 
-- A Panel is possibly the most active when it first loads as it must
+- A `Panel` is possibly the most active when it first loads as it must
   - read configuration settings
-  - create the main Panel/PanelEditor window set and populate all of its properties
+  - create the main `Panel/PanelEditor` window set and populate all of its properties
   - load 100's of modulators/components, read their saved properties, then update the UI state for each
   - create graphic objects & load their properties
   - open midi ports
-- Part of that loading process that occurs simply by being Ctr`lr is `USER-DEFINED` functions that are optionally set for any one of the numerous `hooks` available that `fire-off` when conditions are met.. most of these can be considered as `listeners`.
+- Part of that loading process that occurs simply by being `Ctrlr is USER-DEFINED` functions that are optionally set for any one of the numerous `hooks` available that `fire-off` when conditions are met.. most of these can be considered as `listeners`.
   - Ctrlr's application will call Events & these Events cry-out, with any Listener set to hear it will, in turn call a function.
   - These functions are specific in the Property Editor UI.
 - This table shows functions set for the XStation Panel so far:
@@ -63,11 +78,11 @@ Note: Ensure All layers visible by default(and when exporting!)?? Will objects i
 
 
 ### beforePanelLoaded
-- Create a boolean flag to track if the panel is in a ready state: set to 0
-- Create Global vars:
-  - additional flags that track panel states (for charateristics that don't already have build-in parameters)
-  - initialize tables/arrays for custom value storage, like initial control values, preset & bank lookups
-  - initialize these tables/arrays from hardware or panel elements/properties
+- Create a `boolean flag` to track if the panel is in a ready state: set to 0
+- Create `Global vars`:
+  - `additional flags` that track panel states (for charateristics that don't already have build-in parameters)
+  - `initialize tables/arrays` for custom value storage, like initial control values, preset & bank lookups
+  - `assign values to/from these tables/arrays` from hardware or panel elements/properties
 
 #### startupMethods:beforePanelLoaded()
 ```lua
@@ -187,4 +202,5 @@ end
 
 
 
-
+<!-- this style is NOT honored on github, but is a local IDEs -->
+<style type="text/css">.red{color:red;font-size:16px; background-color:#111111} </style>
