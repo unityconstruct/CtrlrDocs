@@ -2,7 +2,7 @@
 
 ---Lookup Sysex hexstring by ParamId
 ---@return table
-function buildParamIdSysex()
+function getParamsIdSysex()
     local ParamIdSysex = {}
 
     ---Fetches Min/Max param values from table by integer id
@@ -500,7 +500,7 @@ end
 
 ---Lookup Param Min/Max by ParaId
 ---@return table
-function buildParamsIdsMinMax()
+function getParamsIdsMinMax()
     ParamsIdsMinMax = {}
     ---Fetches Min/Max param values from table by integer id
     ---splits table value by ',' and returns a tuple
@@ -1008,11 +1008,13 @@ function buildParamsIdsMinMax()
 
     return ParamsIdsMinMax
 end
+function getParamsNamesSysex()
+    return ParamNamesSysex
+end
 
 --- Table for param name => sysex mapping
-ParamNamesSysex = { id = "ParamsId" }
-
 ---E-MU Proteus ParameterIds
+ParamNamesSysex = { id = "ParamsId" }
 ---@return table
 function ParamNamesSysex:new ()
     setmetatable({},ParamNamesSysex)
@@ -1497,16 +1499,46 @@ function ParamNamesSysex:new ()
 end
 
 
+MidiRequestData = {}
+function MidiRequestData:new()
+    setmetatable({},MidiRequestData)
+    self.SyxCommandId = 0
+    self.SysExCommand = Params.ParamIdSysex[self.SyxCommandId]
+    self.getMidiValue = function(value) return self.SysExCommand end
+    return self
+end
 
+
+-- access Params:LayerSelect values
+Layers = {}
+function Layers:new()
+    setmetatable({},Layers)
+    self.SyxCommandId = 898
+    self.SysExCommand = Params.ParamIdSysex[self.SyxCommandId]
+    -- self.SysExCommand = "02 07"
+    self.Layer1 = "00 00"
+    self.Layer2 = "01 00"
+    self.Layer3 = "02 00"
+    self.Layer4 = "03 00"
+    self.getMidiValue = function(value) return self.Layer4 .. tostring(value) end
+    self.enumLayer = {
+        "Layer1",
+        "Layer2",
+        "Layer3",
+        "Layer4"
+      }
+      self.CurrentLayer = self.enumLayer[1]
+      return self
+end
 
 -- global parameters class
 Params = { id = "Params" }
-
 function Params:new()
     setmetatable({},Params)
-    self.ParamNamesSysex = ParamNamesSysex:new()
-    self.ParamsIdsMinMax = buildParamsIdsMinMax()
-    self.ParamIdSysex = buildParamIdSysex()
+    self.ParamNamesSysex = getParamsNamesSysex()
+    self.ParamsIdsMinMax = getParamsIdsMinMax()
+    self.ParamIdSysex = getParamsIdSysex()
+    self.Layers = Layers:new()
     return self
 end
 
@@ -1516,18 +1548,23 @@ function Params:LayerSelect()
     self.SYSEX_898_LayerSelect = "02 07"
     self.Layer1 = "00 00"
     self.Layer2 = "01 00"
-    self.Layer3 = "02 00"
-    self.Layer4 = "03 00"
-    self.MidiValue = function(value) return self.Layer4 .. tostring(value) end
-    self.enumLayer = {
-        "Layer1",
-        "Layer2",
-        "Layer3",
-        "Layer4"
-      }
+self.Layer3 = "02 00"
+self.Layer4 = "03 00"
+self.MidiValue = function(value) return self.Layer4 .. tostring(value) end
+self.enumLayer = {
+    "Layer1",
+    "Layer2",
+    "Layer3",
+    "Layer4"
+    }
     self.CurrentLayer = self.enumLayer[1]
     return self
-  end
+end
+    
+    
+    
+
+
 
 -- sysex messaging data helper object
 SysEx = { id = "SysEx" }
@@ -1546,8 +1583,8 @@ function SysEx:new ()
     self.SYSEX_COMMAND_PARAM_VALUE_EDIT = "01 02"
     self.SYSEX_COMMAND_PARAM_VALUE_REQUEST = "02 01"
     self.SYSEX_COMMAND_PARAM_MINMAX_REQUEST = "04"
-    self.ParamsIdsMinMax = buildParamsIdsMinMax()
-    self.ParamIdSysex = buildParamIdSysex()
+    self.ParamsIdsMinMax = getParamsIdsMinMax()
+    self.ParamIdSysex = getParamsIdSysex()
     self.ParamNames = ParamNamesSysex:new ()
     self.Params = Params
 
@@ -1590,13 +1627,13 @@ print(syx.BuildMessage(
 --[[ main code block ]]--
 
 --[[ ParamsIdsMinMax ]]--
-local pminmax = buildParamsIdsMinMax()
+local pminmax = getParamsIdsMinMax()
 local pmin, pmax =  pminmax.GetMinMax(898)
 print("MIN: " .. pmin .. " MAX: " .. pmax)
 print(pminmax.GetMinMax(898))
 
 --[[ ParamIdSysex ]]--
-local paramsyx = buildParamIdSysex()
+local paramsyx = getParamsIdSysex()
 print("sysex  : " ..  paramsyx[898])
 -- print(paramsyx.GetSyxex(898))
 print("sysex2 : " .. paramsyx.GetSyxex(898))
@@ -1607,6 +1644,18 @@ local params = Params:new()
 local res = params.ParamsIdsMinMax[paramid] .. params.ParamNamesSysex.MULTIMODE_CHANNEL_SELECT_129 .. params.ParamIdSysex[paramid]
 print(res)
 
+print( string.format('%s %s %s', 
+    params.ParamsIdsMinMax[paramid],
+    params.ParamNamesSysex.LAYER_SELECT_898,
+    params.ParamIdSysex[paramid]
+    )
+)
+print( string.format('%s %s %s', 
+    syx.Params.ParamsIdsMinMax[paramid],
+    syx.Params.ParamNamesSysex.LAYER_SELECT_898,
+    syx.Params.ParamIdSysex[paramid]
+    )
+)
 
 
 --[[
