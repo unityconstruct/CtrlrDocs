@@ -48,6 +48,7 @@ function Params:new()
     setmetatable({},Params)
     return self
 end
+
 -- access Params:LayerSelect values
 function Params:LayerSelect()
   setmetatable({},Params)
@@ -106,7 +107,9 @@ function SysEx:new ()
   self.MidiID = "00"
   self.SpecialDesignator = "55"
   self.SYSEX_PRE = "F0 18 0F 00 55"
-  self.SYSEX_COMMAND_PARAM_SET = "01 02"
+  self.SYSEX_COMMAND_PARAM_VALUE_EDIT = "01 02"
+  self.SYSEX_COMMAND_PARAM_VALUE_REQUEST = "02 01"
+  self.SYSEX_COMMAND_PARAM_MINMAX_REQUEST = "04"
   self.SYSEX_COMMAND = "00 00 00"
   self.SYSEX_897 = "01 07" 
   self.SYSEX_897_PresetSelect = "01 07"
