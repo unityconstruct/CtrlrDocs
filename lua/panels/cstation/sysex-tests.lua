@@ -26,7 +26,7 @@ end
 ]]--
 
 -- global parameters class
-Params = { id = "Params" }
+ParamLookup = { id = "Params" }
 
 SysexParamLayers = {
     ParamId = "898",
@@ -44,14 +44,14 @@ SysexParams = {
     id = 1
 }
 
-function Params:new()
-    setmetatable({},Params)
+function ParamLookup:new()
+    setmetatable({},ParamLookup)
     return self
 end
 
 -- access Params:LayerSelect values
-function Params:LayerSelect()
-  setmetatable({},Params)
+function ParamLookup:LayerSelect()
+  setmetatable({},ParamLookup)
   self.SYSEX_898_LayerSelect = "02 07"
   self.Layer1 = "00 00"
   self.Layer2 = "01 00"
@@ -69,7 +69,7 @@ function Params:LayerSelect()
 end
 
 
-p = Params:new()
+p = ParamLookup:new()
 print(p.SYSEX_898_LayerSelect)
 l = SysexParamLayers
 print(l.Layer1)
@@ -117,7 +117,7 @@ function SysEx:new ()
   self.ParamId = ParamId
   self.CommandId = CommandId
   self.SYSEX_898_LayerSelect = "02 07"
-  self.Params = Params
+  self.ParamLookup = ParamLookup
   self.BuildMessage =
     function(commandId, paramId, valueHexString)
         return string.format('%s %s %s %s %s',
@@ -145,25 +145,25 @@ local syx = SysEx:new()
 print(syx.SYSEX_EOX)
 syx:addCommand("00 11 FF")
 print(syx.SYSEX_COMMAND)
-print(string.format('%s %s',syx.SYSEX_898_LayerSelect, syx.Params:LayerSelect().Layer1))
+print(string.format('%s %s',syx.SYSEX_898_LayerSelect, syx.ParamLookup:LayerSelect().Layer1))
 print(string.format('%s %s %s %s %s',
     syx.SYSEX_PRE,
     syx.CommandId.ParamSet,
     syx.ParamId[898],
     --syx.Params:LayerSelect().SYSEX_898_LayerSelect,
-    syx.Params:LayerSelect().Layer1,
+    syx.ParamLookup:LayerSelect().Layer1,
     syx.SYSEX_EOX
     ))
 
-    print("BUILD MESSAGE: "..syx.BuildMessage(CommandId["ParamSet"],898,syx.Params.Layer1))
-print("BUILD MESSAGE: "..syx.BuildMessage(CommandId["ParamSet"],898,syx.Params.Layer2))
-print("BUILD MESSAGE: "..syx.BuildMessage(CommandId["ParamSet"],898,syx.Params.Layer3))
-print("BUILD MESSAGE: "..syx.BuildMessage(CommandId["ParamSet"],898,syx.Params.Layer4))
+    print("BUILD MESSAGE: "..syx.BuildMessage(CommandId["ParamSet"],898,syx.ParamLookup.Layer1))
+print("BUILD MESSAGE: "..syx.BuildMessage(CommandId["ParamSet"],898,syx.ParamLookup.Layer2))
+print("BUILD MESSAGE: "..syx.BuildMessage(CommandId["ParamSet"],898,syx.ParamLookup.Layer3))
+print("BUILD MESSAGE: "..syx.BuildMessage(CommandId["ParamSet"],898,syx.ParamLookup.Layer4))
 
-print(syx.Params:LayerSelect().CurrentLayer)
-syx.Params:LayerSelect().CurrentLayer = syx.Params.enumLayer[2]
-print(syx.Params.CurrentLayer)
-print(syx.Params.MidiValue("newvalue"))
+print(syx.ParamLookup:LayerSelect().CurrentLayer)
+syx.ParamLookup:LayerSelect().CurrentLayer = syx.ParamLookup.enumLayer[2]
+print(syx.ParamLookup.CurrentLayer)
+print(syx.ParamLookup.MidiValue("newvalue"))
 
 
 --[[ gfind
