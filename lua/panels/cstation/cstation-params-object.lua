@@ -1560,11 +1560,6 @@ self.enumLayer = {
     self.CurrentLayer = self.enumLayer[1]
     return self
 end
-    
-    
-    
-
-
 
 -- sysex messaging data helper object
 SysEx = { id = "SysEx" }
@@ -1610,10 +1605,8 @@ function SysEx:new ()
 
 
 
-
-
-
-
+  
+  --[[ main code block ]]--
 
 
 
@@ -1624,7 +1617,6 @@ print(syx.BuildMessage(
     ParamLookup:LayerSelect().Layer2
     ))
 
---[[ main code block ]]--
 
 --[[ ParamsIdsMinMax ]]--
 local pminmax = getParamIds2MinMax()
