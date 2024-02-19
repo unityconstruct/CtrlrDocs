@@ -2,6 +2,21 @@
 
 
 
+NRPN - 7bit
+CC,ByteValue,MSB7bitValue,99,-2
+CC,ByteValue,LSB7bitValue,98,-2
+CC,ByteValue,LSB7bitValue,6,-1
+
+
+NRPN - 14bit
+CC,ByteValue,MSB7bitValue,99,-2
+CC,ByteValue,LSB7bitValue,98,-2
+CC,ByteValue,MSB7bitValue,6,-1
+CC,ByteValue,LSB7bitValue,38,-1
+
+
+
+
 
 ## prodatum sysex captures
 
