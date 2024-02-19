@@ -61,8 +61,17 @@ function dec2bin(decNum)
 		end
 	end
 	
-	
-	
+	---convert a binary represented as string to decimal using specified base
+--- base would normally be '2' for binary string
+---@param binaryString string binary number represented as a string
+---@param base integer base used for conversion
+---@return integer .return converted decimal number
+function bin2dec(binaryString, base)
+	return tonumber(binaryString, base)
+end
+
+
+--[[ tests
 	-- printBinaryValuesList(2)
 	-- print(dec2bin(255))
 	-- print(math.floor(65535/256))
@@ -79,6 +88,7 @@ function dec2bin(decNum)
 	-- print(2^2)  -- 4
 	-- print(2^1)  -- 2
 	-- print(2^0)  -- 1
+]]--
 	
 	
 	

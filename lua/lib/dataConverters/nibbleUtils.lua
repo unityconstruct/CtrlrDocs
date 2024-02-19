@@ -56,9 +56,6 @@ function DeNibblizeTable14bit(nibbleTable)
 end
 
 
-
-
-
 --- test DeNibbleFunctions
 --- @param nib1 integer - value 0-255
 --- @param nib2 integer - value 0-255
