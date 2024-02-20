@@ -4,6 +4,9 @@
 
 local utils = require "CtrlrDocs.lua.lib.dataConverters.utils"
 
+local DEVICE_ID = 00
+
+--[[ sysex message samples ]]--
 local sysexMessage = "F0180F00551C1E00230010001500030020000900557365722053657475702020202020200001010000000000020000000100010000000100000002007F7F7F7F0000000000000E0000003E007F7F0100000005000100000000000000010001000200000000004A00470019001A0049004B005500480040004100420011001000010020014E004D001B001C00010003005200530001000000000000000000000000000100000001002800600000000A0014001E000100000003000000000000000000000000000100000000000A00000001000000010000000000000000000000000000007F000000030000000000000000007F7F1F0003017F0040007F7F0000010000000100000001007F0040007F7F0000010000000100000002007F0040007F"
 local sysexHeader = ""
 local sysexMessageSetupDump = "F0180F00551C1E00230010001500030020000900557365722053657475702020202020200001010000000000020000000100010000000100000002007F7F7F7F0000000000000E0000003E007F7F0100000005000100000000000000010001000200000000004A00470019001A0049004B005500480040004100420011001000010020014E004D001B001C00010003005200530001000000000000000000000000000100000001002800600000000A0014001E000100000003000000000000000000000000000100000000000A00000001000000010000000000000000000000000000007F000000030000000000000000007F7F1F0003017F0040007F7F0000010000000100000001007F0040007F7F0000010000000100000002007F0040007F7F0000010000000100000003007F0040007F7F0000010000000100000004007F0040007F7F0000010000000100000005007F0040007F7F0000010000000100000006007F0040007F7F0000010000000100000007007F0040007F7F0000010000000100000008007F0040007F7F0000010000000100000009007F0040007F7F000001000000010000000A007F0040007F7F000001000000010000000B007F0040007F7F000001000000010000000C007F0040007F7F000001000000010000000D007F0040007F7F000001000000010000000E007F0040007F7F000001000000010000000F007F0040007F7F0000010000000100000010007F0040007F7F0000010000000100000011007F0040007F7F0000010000000100000012007F0040007F7F0000010000000100000013007F0040007F7F0000010000000100000014007F0040007F7F0000010000000100000015007F0040007F7F0000010000000100000016007F0040007F7F0000010000000100000017007F0040007F7F0000010000000100000018007F0040007F7F0000010000000100000019007F0040007F7F000001000000010000001A007F0040007F7F000001000000010000001B007F0040007F7F000001000000010000001C007F0040007F7F000001000000010000001D007F0040007F7F000001000000010000001E007F0040007F7F000001000000010000001F007F0040007F7F00000100000001000000F7"
@@ -16,8 +19,6 @@ local sysexMessagePresetDump_05 = ""
 local sysexMessagePresetDump_06 = ""
 local sysexMessagePresetDump_07 = ""
 
-
-local DEVICE_ID = 00
 
 --[[ sysex data utils ]]--
 
@@ -90,6 +91,53 @@ local function printValueTable(valueTable)
         print(string.format('ParamName: [%-40s]    Value#: [%-5s]',k,v))
     end
 end
+
+---Fetch Values from the SysexDump to a ValueTable using the SysexDumpSpec
+---@param dumpTable table - sysex message stored in a table - one byte per element
+---@param specTable table - dump specification with PARAM_NAMES and their index in the message. <br/>
+--- used to loopup values from the DumpTable
+---@return table - . returns a ValueTable with KEYS from the SpecTable and VALUES from the DumpTable
+local function fetchDumpToValueTable(dumpTable,specTable)
+    local hexstring -- holds value to store
+    local message   -- builder for logging
+    local valueTable ={} -- holds Parameters Key/Value
+
+    --- iterate over the spec table
+    ---  SpecKEYS will be stored to ValueTable(as KEY)
+    ---  SpecVALUES will be used to lookup on the DumpTable
+    ---  DumpTable VALUE(s) will be stored to ValueTable(as VALUE)
+    ---  KEYS rely on 'CHAR' being in their identifier to trigger SINGLE or DOUBLE byte retrieval
+    ---  return the ValueTable and Commit it to the SysexUtil object so everything is in one place
+    for k,v in pairs(specTable) do
+        -- check everything for nil - skip if found
+        if k ~= nil 
+            and v ~=nil 
+            and type(v) ~= "function" 
+            and dumpTable[v] ~= nil
+            and dumpTable[v+1] ~=nil
+        then
+            -- parse KEY for CHAR to trigger SINGLE value lookup on DumpTable
+            -- use the VALUE of the Spec as the lookup in the DumpTable
+            if (string.find(k,"CHAR",1,true) ~= nil) then
+                -- only get one byte
+                hexstring = string.format('%s',dumpTable[v])
+                message = string.format('ParamName:[%-40s] Param#:[%-5d] : LookupValue1:[%-5s]',k,v,dumpTable[v])
+            else
+                -- get two bytes
+                hexstring = string.format('%s%s',dumpTable[v],dumpTable[v+1])
+                message = string.format('ParamName:[%-40s] Param#:[%-5d] : LookupValue1:[%-5s] LookupValue2:[%-5s]',k,v,dumpTable[v],dumpTable[v+1])
+            end
+            -- add the SpecTable KEY and DumpTable VALUE
+            valueTable[k] = hexstring
+            print(message)
+        end
+    end
+
+    
+    return valueTable
+
+end
+
 
 
 --[[ data tables ]]--
@@ -237,6 +285,7 @@ function SysexDeviceConfigurationDump:new()
     return self
 end
 
+--[[ Response Message Spec for 10-1C ]]--
 SysexSetupDumpSpec_1C = {}
 function SysexSetupDumpSpec_1C:new()
     setmetatable({},SysexSetupDumpSpec_1C)
@@ -746,20 +795,6 @@ function SysexDumps:new()
     return self
 end
 
--- function pairsByKeys (t, f)
---     local a = {}
---     for n in pairs(t) do table.insert(a, n) end
---     table.sort(a, f)
---     local i = 0      -- iterator variable
---     local iter = function ()   -- iterator function
---       i = i + 1
---       if a[i] == nil then return nil
---       else return a[i], t[a[i]]
---       end
---     end
---     return iter
---   end
-
 
 ---sort and return a table
 ---@param tbl table - unsorted table
@@ -803,10 +838,13 @@ local function tableSortAndReturn(unsortedTable)
 end
 
 
-    -- for i,n in ipairs(tempArray) do 
-    --     print(n)
-    --     tempArray[#tempArray+1] = n
-    -- end
+
+
+
+
+--[[ TESTS ]]--
+
+
 
 
 --[[ SetupDump_1C tests ]]--
@@ -819,23 +857,158 @@ local result = fetchSysexParam2Byte(sysexUtils.SysexSetupDump_1C,sysexUtils.Syse
 -- local sortedTable = tableSort(sysexUtils.SetupDumpSpec_1C)
 
 
--- table.sort(sysexUtils.SetupDumpSpec_1C, function (a, b)
---     return string.lower(a) < string.lower(b)
---   end)
-
-for k,v in tableSort(sysexUtils.SysexSetupDumpSpec_1C)
-do
-    local item = tostring(k) .. " = " .. tostring(v)
-    print(item)
-end
-
-local sortedTable = tableSortAndReturn(sysexUtils.SysexSetupDumpSpec_1C)
-
-print(tostring(sortedTable.MIDI_ID))
+--[[ fetchDumpToValueTable test that scans sysexdump using DumpSpec, then create valueTable for each Parameter Field ]]--
+-- local valueTable = fetchDumpToValueTable(sysexUtils.SysexSetupDump_1C, SysexSetupDumpSpec_1C)
+local valueTable = fetchDumpToValueTable(sysexUtils.SysexSetupDump_1C, sysexUtils.SysexSetupDumpSpec_1C)
+printValueTable(valueTable)
 
 
+
+--[[ DEBUG HALT ]]--
+
+local stop = "STOP!"
+
+
+
+
+--[[ RETURN ]]--
+
+
+--- expose functions via module(i think... if not, then exposes globally)
+return {
+    SysexSpecPresetDump = SysexPresetDumpSpec:new()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--[[ tests ]]--
+
+
+--[[ test: table.sort util
+    -- table.sort(sysexUtils.SetupDumpSpec_1C, function (a, b)
+    --     return string.lower(a) < string.lower(b)
+    --   end)
+    for k,v in tableSort(sysexUtils.SysexSetupDumpSpec_1C)
+    do
+        local item = tostring(k) .. " = " .. tostring(v)
+        print(item)
+    end
+    
+    local sortedTable = tableSortAndReturn(sysexUtils.SysexSetupDumpSpec_1C)
+    print(tostring(sortedTable.MIDI_ID))
+]]--
+
+--[[ test sysex parser and assign to SysexDumps.SetupDump_1C
+local sysD = SysexDumps:new()
+print("size: " .. #sysD.ParameterMinMax_03 .. " is: " .. tostring(sysD.isParameterMinMax_03()))
+]]--
+
+--[[ local syxDumpTable = parseSyxToTable(sysexMessage)
+local syxDumpTable = parseSyxToTable(sysexMessage)
+print(table.concat(syxDumpTable,","))
+]]--
+
+--[[ SetupDump tests 
+sysD.SetupDump_1C = parseSyxToTable(sysexSetupDump)
+print("OUTPUT:\n"..syxDumpTableToString(sysD.SetupDump_1C))
+print("OUTPUT:\n"..syxDumpTableToString(sysD.SetupDump_1C,","))
+setupDumpSpec_1C = SetupDumpSpec_1C:new()
+print("VALUE:\n"..tostring(sysD.SetupDump_1C[setupDumpSpec_1C.MIDI_A_CONTROL])..tostring(sysD.SetupDump_1C[setupDumpSpec_1C.MIDI_A_CONTROL+1])  )
+print(sysHexStringFormatWith(sysexSetupDump,","))
+
+
+local sysexDeviceInquiry_Test = SysexDeviceInquiry:new()
+local thisvalue = sysexDeviceInquiry_Test.Param_ManufacturersSysexId_Index
+print(thisvalue)
+
+-- test sysex parse to table and extracting the ManufacturersSysexId from the table
+local syxDump = parseSyxToTable(sysex)
+local syxDeviceInquiry = parseDeviceInquiryResponse(syxDump)
+print(tostring(syxDeviceInquiry.ManufacturersSysexId))
+]]--
+
+--[[ info ]]--
+
+--[[ Sysex non-realtime ]]--
 --[[
+    DeviceInquiry_0602
+    BulkTuning_0801
+]]--
 
+--[[ Sysex ]]--
+--[[
+ParameterValue_0201
+ParameterMinMax_03
+GenericName_0B
+
+HardwareConfiguration_09
+DumpRequest
+PresetDumpHeaderClosed_1001
+PresetDumpMessageClosed_1002
+PresetDumpHeaderOpen_1003
+PresetDumpMessageOpen_1004
+PresetCommonParams_1010
+PresetCommonGeneralParams_1011
+PresetCommonArpParams_1012
+PresetCommonEffectsParams_1013
+PresetCommonLinkParams_1014
+PresetLayerParameters_1020
+PresetLayerCommonParams_1021
+PresetLayerFilterParams_1022
+PresetLayerLFOParams_1023
+PresetLayerEnvelopeParams_1024
+PresetLayerPatchcordParams_1035
+]]--
+
+--[[ Preset Dump SubCommands [10] ]]--
+--[[
+    00h (reserved)
+    01h Preset Dump Header Closed Loop
+    02h Preset Dump Data Message Closed Loop
+    03h Preset Dump Header Open Loop
+    04h Preset Dump Data Message Open Loop
+    10h Preset Common Dump Data Message
+    11h Preset Common General Dump Data Message
+    12h Preset Common Arp Dump Data Message
+    13h Preset Common Effects Dump Data Message (Master or Preset)
+    14h Preset Common Links Dump Data Message
+    20h Preset Layer Dump Data Message
+    21h Preset Layer Common Dump Data Message
+    22h Preset Layer Filter Dump Data Message
+    23h Preset Layer LFO Dump Data Message
+    24h Preset Layer Envelopes Dump Data Message
+    25h Preset Layer PatchCords Dump Data Message
+]]--
+
+--[[ table sorting logic: pairsByKeys
+function pairsByKeys (t, f)
+    local a = {}
+    for n in pairs(t) do table.insert(a, n) end
+    table.sort(a, f)
+    local i = 0      -- iterator variable
+    local iter = function ()   -- iterator function
+      i = i + 1
+      if a[i] == nil then return nil
+      else return a[i], t[a[i] ]
+      end
+    end
+    return iter
+  end
+]]--
+
+--[[ initial Spec loop for pulling Dumpvalues to ValueTable
 local hexstring, message
 local setupDumpTable ={}
 for k,v in pairs(sysexUtils.SysexSetupDumpSpec_1C) do
@@ -867,151 +1040,9 @@ for k,v in pairs(sysexUtils.SysexSetupDumpSpec_1C) do
 end
 ]]--
 
-
-local function fetchDumpToValueTable(dumpTable,specTable)
-    local hexstring -- holds value to store
-    local message   -- builder for logging
-    local valueTable ={} -- holds Parameters Key/Value
-
-    --- iterate over the spec table
-    ---  SpecKEYS will be stored to ValueTable(as KEY)
-    ---  SpecVALUES will be used to lookup on the DumpTable
-    ---  DumpTable VALUE(s) will be stored to ValueTable(as VALUE)
-    ---  KEYS rely on 'CHAR' being in their identifier to trigger SINGLE or DOUBLE byte retrieval
-    ---  return the ValueTable and Commit it to the SysexUtil object so everything is in one place
-    for k,v in pairs(sysexUtils.SysexSetupDumpSpec_1C) do
-        -- check everything for nil - skip if found
-        if k ~= nil 
-            and v ~=nil 
-            and type(v) ~= "function" 
-            and sysexUtils.SysexSetupDump_1C[v] ~= nil
-            and sysexUtils.SysexSetupDump_1C[v+1] ~=nil
-        then
-            -- parse KEY for CHAR to trigger SINGLE value lookup on DumpTable
-            -- use the VALUE of the Spec as the lookup in the DumpTable
-            if (string.find(k,"CHAR",1,true) ~= nil) then
-                -- only get one byte
-                hexstring = string.format('%s',sysexUtils.SysexSetupDump_1C[v])
-                message = string.format('ParamName:[%-40s] Param#:[%-5d] : LookupValue1:[%-5s]',k,v,sysexUtils.SysexSetupDump_1C[v])
-            else
-                -- get two bytes
-                hexstring = string.format('%s%s',sysexUtils.SysexSetupDump_1C[v],sysexUtils.SysexSetupDump_1C[v+1])
-                message = string.format('ParamName:[%-40s] Param#:[%-5d] : LookupValue1:[%-5s] LookupValue2:[%-5s]',k,v,sysexUtils.SysexSetupDump_1C[v],sysexUtils.SysexSetupDump_1C[v+1])
-            end
-            -- add the SpecTable KEY and DumpTable VALUE
-            valueTable[k] = hexstring
-            print(message)
-        end
-    
-        -- if type(v) ~= "function" then
-        --     -- print(tostring(sysexUtils.SetupDump_1C[v]))
-        -- end
-        
-    end
-    return valueTable
-
+--[[ ipairs example 
+for i,n in ipairs(tempArray) do 
+    print(n)
+    tempArray[#tempArray+1] = n
 end
-
-
-local valueTable = fetchDumpToValueTable(sysexUtils.SysexSetupDump_1C, SysexSetupDumpSpec_1C)
-printValueTable(valueTable)
-
-
-
-
-local stop = "STOP!"
-
-
-
-return {
-    SysexSpecPresetDump = SysexPresetDumpSpec:new()
-}
-
-
---[[ test sysex parser and assign to SysexDumps.SetupDump_1C]]--
--- local sysD = SysexDumps:new()
--- print("size: " .. #sysD.ParameterMinMax_03 .. " is: " .. tostring(sysD.isParameterMinMax_03()))
-
-
-
-
---[[ tests ]]--
--- local syxDumpTable = parseSyxToTable(sysexMessage)
--- print(table.concat(syxDumpTable,","))
-
---[[ SetupDump tests ]]--
--- sysD.SetupDump_1C = parseSyxToTable(sysexSetupDump)
--- print("OUTPUT:\n"..syxDumpTableToString(sysD.SetupDump_1C))
--- print("OUTPUT:\n"..syxDumpTableToString(sysD.SetupDump_1C,","))
--- setupDumpSpec_1C = SetupDumpSpec_1C:new()
--- print("VALUE:\n"..tostring(sysD.SetupDump_1C[setupDumpSpec_1C.MIDI_A_CONTROL])..tostring(sysD.SetupDump_1C[setupDumpSpec_1C.MIDI_A_CONTROL+1])  )
--- print(sysHexStringFormatWith(sysexSetupDump,","))
-
-
--- local sysexDeviceInquiry_Test = SysexDeviceInquiry:new()
--- local thisvalue = sysexDeviceInquiry_Test.Param_ManufacturersSysexId_Index
--- print(thisvalue)
-
---[[ test sysex parse to table and extracting the ManufacturersSysexId from the table]]
--- local syxDump = parseSyxToTable(sysex)
--- local syxDeviceInquiry = parseDeviceInquiryResponse(syxDump)
--- print(tostring(syxDeviceInquiry.ManufacturersSysexId))
-
-
-
-
-
---[[ info ]]--
-
---[[ Sysex non-realtime ]]--
---[[
-    DeviceInquiry_0602
-    BulkTuning_0801
-]]--
-
-
---[[ Sysex ]]--
---[[
-ParameterValue_0201
-ParameterMinMax_03
-GenericName_0B
-
-HardwareConfiguration_09
-DumpRequest
-PresetDumpHeaderClosed_1001
-PresetDumpMessageClosed_1002
-PresetDumpHeaderOpen_1003
-PresetDumpMessageOpen_1004
-PresetCommonParams_1010
-PresetCommonGeneralParams_1011
-PresetCommonArpParams_1012
-PresetCommonEffectsParams_1013
-PresetCommonLinkParams_1014
-PresetLayerParameters_1020
-PresetLayerCommonParams_1021
-PresetLayerFilterParams_1022
-PresetLayerLFOParams_1023
-PresetLayerEnvelopeParams_1024
-PresetLayerPatchcordParams_1035
-]]--
-
-
---[[ Preset Dump SubCommands [10] ]]--
---[[
-    00h (reserved)
-    01h Preset Dump Header Closed Loop
-    02h Preset Dump Data Message Closed Loop
-    03h Preset Dump Header Open Loop
-    04h Preset Dump Data Message Open Loop
-    10h Preset Common Dump Data Message
-    11h Preset Common General Dump Data Message
-    12h Preset Common Arp Dump Data Message
-    13h Preset Common Effects Dump Data Message (Master or Preset)
-    14h Preset Common Links Dump Data Message
-    20h Preset Layer Dump Data Message
-    21h Preset Layer Common Dump Data Message
-    22h Preset Layer Filter Dump Data Message
-    23h Preset Layer LFO Dump Data Message
-    24h Preset Layer Envelopes Dump Data Message
-    25h Preset Layer PatchCords Dump Data Message
 ]]--
