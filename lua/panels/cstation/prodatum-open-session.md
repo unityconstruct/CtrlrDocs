@@ -1,6 +1,20 @@
 
 
 
+F0 7E 00 - Universal System Exclusive Non-realtime header
+F0 - SOX
+7E - SysExclusive Non-realtime
+00 - DeviceID
+
+06 - General Information
+01 - Identity Request
+F7 - EOX
+
+O.2::F0 7E 00 06 01 F7
+I.1::F0 7E 00 06 02 18 04 04 0D 00 32 2E 30 30 F7
+
+
+
 O.1::F0 7E 00 06 01 F7
 O.2::F0 7E 00 06 01 F7
 O.3::F0 18 0F 00 55 01 02 15 03 20 01 F7
