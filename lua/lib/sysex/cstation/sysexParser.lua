@@ -16,6 +16,9 @@ local sysexMessagePresetDump_05 = ""
 local sysexMessagePresetDump_06 = ""
 local sysexMessagePresetDump_07 = ""
 
+
+local DEVICE_ID = 00
+
 --[[ sysex data utils ]]--
 
 ---parse a sysex hexString into a table holding 2chars per element
@@ -83,9 +86,9 @@ end
 
 --[[ tables ]]--
 
-local SysexSpecPresetDump = {}
-function SysexSpecPresetDump:new()
-    setmetatable({},SysexSpecPresetDump)
+local SysexPresetDumpSpec = {}
+function SysexPresetDumpSpec:new()
+    setmetatable({},SysexPresetDumpSpec)
     self.PRESET_NAME_CHAR_0_899 = 1
     self.PRESET_NAME_CHAR_1_900 = 2
     self.PRESET_NAME_CHAR_2_901 = 3
@@ -165,7 +168,7 @@ SysexDeviceInquiry = {}
 function SysexDeviceInquiry:new()
     setmetatable({},SysexDeviceInquiry)
     self.SysexDump = {}
-    self.isDumpPresent = false
+    self.isSysexDumpPresent = false
     self.Request = "F07E000601F7"
     self.Response = "F07E00060218ffffddddssssssssF7"
 
@@ -219,16 +222,16 @@ end
 
 --[[ sysex dumps ]]--
 
-SysexDumpDeviceConfiguration = {}
-function SysexDumpDeviceConfiguration:new()
-    setmetatable({},SysexDumpDeviceConfiguration)
+SysexDeviceConfigurationDump = {}
+function SysexDeviceConfigurationDump:new()
+    setmetatable({},SysexDeviceConfigurationDump)
 
     return self
 end
 
-SetupDumpSpec_1C = {}
-function SetupDumpSpec_1C:new()
-    setmetatable({},SetupDumpSpec_1C)
+SysexSetupDumpSpec_1C = {}
+function SysexSetupDumpSpec_1C:new()
+    setmetatable({},SysexSetupDumpSpec_1C)
     self.SOX = 1
     self.EMU_ID = 2
     self.PROTEUS_ID = 3
@@ -655,7 +658,7 @@ function SetupDumpSpec_1C:new()
     return self
 end
 
-
+--[[ ALL DUMPS OBJECT ]]--
 
 SysexDumps = {}
 ---common object to house ALL data dump tables
@@ -672,63 +675,64 @@ function SysexDumps:new()
     ]]--
 
     --[[ setup ]]--
-    self.SetupDump_1C = {}
-    self.isSetupDump_1C = function() return #self.SetupDump_1C > 0 end
-    self.SetupDumpSpec_1C = SetupDumpSpec_1C:new() -- instantiate the table
+    self.SysexSetupDump_1C = {}
+    self.isSysexSetupDump_1C = function() return #self.SysexSetupDump_1C > 0 end
+    self.SysexSetupDumpSpec_1C = SysexSetupDumpSpec_1C:new() -- instantiate the table
+
 
     --[[ Sysex non-realtime ]]--
-    self.DeviceInquiry_0601 = {}
-    self.isDeviceInquiry_0601 = function() return #self.DeviceInquiry_0601 > 0 end
+    self.SysexDeviceInquiryDump_0601 = {}
+    self.isSysexDeviceInquiryDump_0601 = function() return #self.SysexDeviceInquiryDump_0601 > 0 end
     --[[ sysex parameter ]]--
     self.ParameterValue_0201 = {}
-    self.isParameterValue_0201 = function() return #self.ParameterValue_0201 > 0 end
+    self.isSysexParameterValue_0201 = function() return #self.ParameterValue_0201 > 0 end
     self.ParameterMinMax_03 = {}
-    self.isParameterMinMax_03 = function() return #self.ParameterMinMax_03 > 0 end
+    self.isSysexParameterMinMax_03 = function() return #self.ParameterMinMax_03 > 0 end
     --[[ configuration ]]--
-    self.HardwareConfiguration_09 = {}
-    self.isHardwareConfiguration_09 = function() return #self.HardwareConfiguration_09 > 0 end
+    self.SysexHardwareConfigurationDump_09 = {}
+    self.isSysexHardwareConfigurationDump_09 = function() return #self.SysexHardwareConfigurationDump_09 > 0 end
     --[[ sysem name ]]--
-    self.GenericName_0B = {}
-    self.isGenericName_0B = function() return #self.GenericName_0B > 0 end
+    self.SysexGenericNameDump_0B = {}
+    self.isSysexGenericNameDump_0B = function() return #self.SysexGenericNameDump_0B > 0 end
     --[[ prest dump closed loop ]]--
-    self.PresetDumpHeaderClosed_1001 = {}
-    self.isPresetDumpHeaderClosed_1001 = function() return #self.PresetDumpHeaderClosed_1001 > 0 end
-    self.PresetDumpMessageClosed_1002 = {}
-    self.isPresetDumpMessageClosed_1002 = function() return #self.PresetDumpMessageClosed_1002 > 0 end
+    self.SysexPresetDumpHeaderClosedDump_1001 = {}
+    self.isSysexPresetDumpHeaderClosedDump_1001 = function() return #self.SysexPresetDumpHeaderClosedDump_1001 > 0 end
+    self.SysexPresetDumpMessageClosedDump_1002 = {}
+    self.isSysexPresetDumpMessageClosedDump_1002 = function() return #self.SysexPresetDumpMessageClosedDump_1002 > 0 end
     --[[ prest dump open loop ]]--
-    self.PresetDumpHeaderOpen_1003 = {}
-    self.isPresetDumpHeaderOpen_1003 = function() return #self.PresetDumpHeaderOpen_1003 > 0 end
-    self.PresetDumpMessageOpen_1004 = {}
-    self.isPresetDumpMessageOpen_1004 = function() return #self.PresetDumpMessageOpen_1004 > 0 end
+    self.SysexPresetDumpHeaderOpenDump_1003 = {}
+    self.isSysexPresetDumpHeaderOpenDump_1003 = function() return #self.SysexPresetDumpHeaderOpenDump_1003 > 0 end
+    self.SysexPresetDumpMessageOpenDump_1004 = {}
+    self.isSysexPresetDumpMessageOpenDump_1004 = function() return #self.SysexPresetDumpMessageOpenDump_1004 > 0 end
     --[[ preset common ]]--
-    self.PresetCommonParams_1010 = {}
-    self.isPresetCommonParams_1010 = function() return #self.PresetCommonParams_1010 > 0 end
-    self.PresetCommonGeneralParams_1011 = {}
-    self.isPresetCommonGeneralParams_1011 = function() return #self.PresetCommonGeneralParams_1011 > 0 end
-    self.PresetCommonArpParams_1012 = {}
-    self.isPresetCommonArpParams_1012 = function() return #self.PresetCommonArpParams_1012 > 0 end
-    self.PresetCommonEffectsParams_1013 = {}
-    self.isPresetCommonEffectsParams_1013 = function() return #self.PresetCommonEffectsParams_1013 > 0 end
-    self.PresetCommonLinkParams_1014 = {}
-    self.isPresetCommonLinkParams_1014 = function() return #self.PresetCommonLinkParams_1014 > 0 end
+    self.SysexPresetCommonParamsDump_1010 = {}
+    self.isSysexPresetCommonParamsDump_1010 = function() return #self.SysexPresetCommonParamsDump_1010 > 0 end
+    self.SysexPresetCommonGeneralParamsDump_1011 = {}
+    self.isSysexPresetCommonGeneralParamsDump_1011 = function() return #self.SysexPresetCommonGeneralParamsDump_1011 > 0 end
+    self.SysexPresetCommonArpParamsDump_1012 = {}
+    self.isSysexPresetCommonArpParamsDump_1012 = function() return #self.SysexPresetCommonArpParamsDump_1012 > 0 end
+    self.SysexPresetCommonEffectsParamsDump_1013 = {}
+    self.isSysexPresetCommonEffectsParamsDump_1013 = function() return #self.SysexPresetCommonEffectsParamsDump_1013 > 0 end
+    self.SysexPresetCommonLinkParamsDump_1014 = {}
+    self.isSysexPresetCommonLinkParamsDump_1014 = function() return #self.SysexPresetCommonLinkParamsDump_1014 > 0 end
     --[[ preset layer ]]--
-    self.PresetLayerParameters_1020 = {}
-    self.isPresetLayerParameters_1020 = function() return #self.PresetLayerParameters_1020 > 0 end
-    self.PresetLayerCommonParams_1021 = {}
-    self.isPresetLayerCommonParams_1021 = function() return #self.PresetLayerCommonParams_1021 > 0 end
-    self.PresetLayerFilterParams_1022 = {}
-    self.isPresetLayerFilterParams_1022 = function() return #self.PresetLayerFilterParams_1022 > 0 end
-    self.PresetLayerLFOParams_1023 = {}
-    self.isPresetLayerLFOParams_1023 = function() return #self.PresetLayerLFOParams_1023 > 0 end
-    self.PresetLayerEnvelopeParams_1024 = {}
-    self.isPresetLayerEnvelopeParams_1024 = function() return #self.PresetLayerEnvelopeParams_1024 > 0 end
-    self.PresetLayerPatchcordParams_1035 = {}
-    self.isPresetLayerPatchcordParams_1035 = function() return #self.PresetLayerPatchcordParams_1035 > 0 end
+    self.SysexPresetLayerParametersDump_1020 = {}
+    self.isSysexPresetLayerParametersDump_1020 = function() return #self.SysexPresetLayerParametersDump_1020 > 0 end
+    self.SysexPresetLayerCommonParamsDump_1021 = {}
+    self.isSysexPresetLayerCommonParamsDump_1021 = function() return #self.SysexPresetLayerCommonParamsDump_1021 > 0 end
+    self.SysexPresetLayerFilterParamsDump_1022 = {}
+    self.isSysexPresetLayerFilterParamsDump_1022 = function() return #self.SysexPresetLayerFilterParamsDump_1022 > 0 end
+    self.SysexPresetLayerLFOParamsDump_1023 = {}
+    self.isSysexPresetLayerLFOParamsDump_1023 = function() return #self.SysexPresetLayerLFOParamsDump_1023 > 0 end
+    self.SysexPresetLayerEnvelopeParamsDump_1024 = {}
+    self.isSysexPresetLayerEnvelopeParamsDump_1024 = function() return #self.SysexPresetLayerEnvelopeParamsDump_1024 > 0 end
+    self.SysexPresetLayerPatchcordParamsDump_1035 = {}
+    self.isSysexPresetLayerPatchcordParamsDump_1035 = function() return #self.SysexPresetLayerPatchcordParamsDump_1035 > 0 end
 
     --[[ not used 
     -- self.GenericDumpRequest_61000100 = {}
     -- self.PresetDumpRequest = {}
-    -- self.isDumpRequest = function() return #self.DumpRequest > 0 end
+    -- self.isSysexDumpRequest = function() return #self.DumpRequest > 0 end
     ]]--
 
     return self
@@ -801,9 +805,9 @@ end
 -- instantiate the utility object that: holds sysex Specs and incoming message dumps
 local sysexUtils = SysexDumps:new()
 -- update the util with a SetupDump message
-sysexUtils.SetupDump_1C = parseSyxToTable(sysexMessageSetupDump)
+sysexUtils.SysexSetupDump_1C = parseSyxToTable(sysexMessageSetupDump)
 -- now search the same SetupDumpSpec_1C in the utility
-local result = fetchSysexParam2Byte(sysexUtils.SetupDump_1C,sysexUtils.SetupDumpSpec_1C.MIDI_A_CONTROL)
+local result = fetchSysexParam2Byte(sysexUtils.SysexSetupDump_1C,sysexUtils.SysexSetupDumpSpec_1C.MIDI_A_CONTROL)
 -- local sortedTable = tableSort(sysexUtils.SetupDumpSpec_1C)
 
 
@@ -811,13 +815,13 @@ local result = fetchSysexParam2Byte(sysexUtils.SetupDump_1C,sysexUtils.SetupDump
 --     return string.lower(a) < string.lower(b)
 --   end)
 
-for k,v in tableSort(sysexUtils.SetupDumpSpec_1C)
+for k,v in tableSort(sysexUtils.SysexSetupDumpSpec_1C)
 do
     local item = tostring(k) .. " = " .. tostring(v)
     print(item)
 end
 
-local sortedTable = tableSortAndReturn(sysexUtils.SetupDumpSpec_1C)
+local sortedTable = tableSortAndReturn(sysexUtils.SysexSetupDumpSpec_1C)
 
 print(tostring(sortedTable.MIDI_ID))
 
@@ -825,23 +829,23 @@ print(tostring(sortedTable.MIDI_ID))
 
 local hexstring, message
 local setupDumpTable ={}
-for k,v in pairs(sysexUtils.SetupDumpSpec_1C) do
+for k,v in pairs(sysexUtils.SysexSetupDumpSpec_1C) do
     print(tostring(v))
 
     if k ~= nil 
         and v ~=nil 
         and type(v) ~= "function" 
-        and sysexUtils.SetupDump_1C[v] ~= nil
-        and sysexUtils.SetupDump_1C[v+1] ~=nil
+        and sysexUtils.SysexSetupDump_1C[v] ~= nil
+        and sysexUtils.SysexSetupDump_1C[v+1] ~=nil
     then
         if (string.find(k,"CHAR",1,true) == nil) then
             -- get two bytes
-            hexstring = string.format('%s%s',sysexUtils.SetupDump_1C[v],sysexUtils.SetupDump_1C[v+1])
-            message = string.format('Key:[%s] Value:[%d] : LookupValue1:[%s] LookupValue2:[%s]',k,v,sysexUtils.SetupDump_1C[v],sysexUtils.SetupDump_1C[v+1])
+            hexstring = string.format('%s%s',sysexUtils.SysexSetupDump_1C[v],sysexUtils.SysexSetupDump_1C[v+1])
+            message = string.format('Key:[%s] Value:[%d] : LookupValue1:[%s] LookupValue2:[%s]',k,v,sysexUtils.SysexSetupDump_1C[v],sysexUtils.SysexSetupDump_1C[v+1])
         else
             -- only get one byte
-            hexstring = string.format('%s',sysexUtils.SetupDump_1C[v])
-            message = string.format('Key:[%s] Value:[%d] : LookupValue1:[%s]',k,v,sysexUtils.SetupDump_1C[v])
+            hexstring = string.format('%s',sysexUtils.SysexSetupDump_1C[v])
+            message = string.format('Key:[%s] Value:[%d] : LookupValue1:[%s]',k,v,sysexUtils.SysexSetupDump_1C[v])
         end
         setupDumpTable[k] = hexstring
         print(message)
@@ -858,7 +862,7 @@ local stop = "STOP!"
 
 
 return {
-    SysexSpecPresetDump = SysexSpecPresetDump:new()
+    SysexSpecPresetDump = SysexPresetDumpSpec:new()
 }
 
 
