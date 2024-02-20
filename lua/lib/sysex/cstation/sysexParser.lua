@@ -83,8 +83,16 @@ local function fetchSysexParam2Byte(syxDumpTable,loc)
     return hexstring
 end
 
+---print Value Table to console for logging
+---@param valueTable table - value table [string,hexstring]
+local function printValueTable(valueTable)
+    for k,v in pairs(valueTable) do
+        print(string.format('ParamName: [%-40s]    Value#: [%-5s]',k,v))
+    end
+end
 
---[[ tables ]]--
+
+--[[ data tables ]]--
 
 local SysexPresetDumpSpec = {}
 function SysexPresetDumpSpec:new()
@@ -164,9 +172,9 @@ function SysexPresetDumpSpec:new()
 
 end
 
-SysexDeviceInquiry = {}
-function SysexDeviceInquiry:new()
-    setmetatable({},SysexDeviceInquiry)
+SysexDeviceInquiryDumpSpec = {}
+function SysexDeviceInquiryDumpSpec:new()
+    setmetatable({},SysexDeviceInquiryDumpSpec)
     self.SysexDump = {}
     self.isSysexDumpPresent = false
     self.Request = "F07E000601F7"
@@ -198,7 +206,7 @@ end
 local function parseDeviceInquiryResponse(sysexDeviceInquiryTable)
     sysexDeviceInquiryTable = sysexDeviceInquiryTable or {}
     local syx = sysexDeviceInquiryTable
-    local sysexDeviceInquiry = SysexDeviceInquiry:new()
+    local sysexDeviceInquiry = SysexDeviceInquiryDumpSpec:new()
     local get = ""
     for i=0,sysexDeviceInquiry.Param_ManufacturersSysexId_Size-1,1 do
         get = get .. tostring(syx[sysexDeviceInquiry.Param_ManufacturersSysexId_Index+i])
@@ -826,6 +834,7 @@ local sortedTable = tableSortAndReturn(sysexUtils.SysexSetupDumpSpec_1C)
 print(tostring(sortedTable.MIDI_ID))
 
 
+--[[
 
 local hexstring, message
 local setupDumpTable ={}
@@ -856,6 +865,59 @@ for k,v in pairs(sysexUtils.SysexSetupDumpSpec_1C) do
     -- end
     
 end
+]]--
+
+
+local function fetchDumpToValueTable(dumpTable,specTable)
+    local hexstring -- holds value to store
+    local message   -- builder for logging
+    local valueTable ={} -- holds Parameters Key/Value
+
+    --- iterate over the spec table
+    ---  SpecKEYS will be stored to ValueTable(as KEY)
+    ---  SpecVALUES will be used to lookup on the DumpTable
+    ---  DumpTable VALUE(s) will be stored to ValueTable(as VALUE)
+    ---  KEYS rely on 'CHAR' being in their identifier to trigger SINGLE or DOUBLE byte retrieval
+    ---  return the ValueTable and Commit it to the SysexUtil object so everything is in one place
+    for k,v in pairs(sysexUtils.SysexSetupDumpSpec_1C) do
+        -- check everything for nil - skip if found
+        if k ~= nil 
+            and v ~=nil 
+            and type(v) ~= "function" 
+            and sysexUtils.SysexSetupDump_1C[v] ~= nil
+            and sysexUtils.SysexSetupDump_1C[v+1] ~=nil
+        then
+            -- parse KEY for CHAR to trigger SINGLE value lookup on DumpTable
+            -- use the VALUE of the Spec as the lookup in the DumpTable
+            if (string.find(k,"CHAR",1,true) ~= nil) then
+                -- only get one byte
+                hexstring = string.format('%s',sysexUtils.SysexSetupDump_1C[v])
+                message = string.format('ParamName:[%-40s] Param#:[%-5d] : LookupValue1:[%-5s]',k,v,sysexUtils.SysexSetupDump_1C[v])
+            else
+                -- get two bytes
+                hexstring = string.format('%s%s',sysexUtils.SysexSetupDump_1C[v],sysexUtils.SysexSetupDump_1C[v+1])
+                message = string.format('ParamName:[%-40s] Param#:[%-5d] : LookupValue1:[%-5s] LookupValue2:[%-5s]',k,v,sysexUtils.SysexSetupDump_1C[v],sysexUtils.SysexSetupDump_1C[v+1])
+            end
+            -- add the SpecTable KEY and DumpTable VALUE
+            valueTable[k] = hexstring
+            print(message)
+        end
+    
+        -- if type(v) ~= "function" then
+        --     -- print(tostring(sysexUtils.SetupDump_1C[v]))
+        -- end
+        
+    end
+    return valueTable
+
+end
+
+
+local valueTable = fetchDumpToValueTable(sysexUtils.SysexSetupDump_1C, SysexSetupDumpSpec_1C)
+printValueTable(valueTable)
+
+
+
 
 local stop = "STOP!"
 
