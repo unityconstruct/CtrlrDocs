@@ -2,19 +2,40 @@
 
 local sysex = "F0180F00551C1E00230010001500030020000900557365722053657475702020202020200001010000000000020000000100010000000100000002007F7F7F7F0000000000000E0000003E007F7F0100000005000100000000000000010001000200000000004A00470019001A0049004B005500480040004100420011001000010020014E004D001B001C00010003005200530001000000000000000000000000000100000001002800600000000A0014001E000100000003000000000000000000000000000100000000000A00000001000000010000000000000000000000000000007F000000030000000000000000007F7F1F0003017F0040007F7F0000010000000100000001007F0040007F7F0000010000000100000002007F0040007F"
 local sysexHeader = ""
-local function parseSysex(sysexString)
+
+---parse a sysex hexString into a table holding 2chars per element
+---@param sysexString string - sysex string with no space delimeters
+---@return table - . tabulated sysex data
+local function parseSysexToTable(sysexString)
+    --remove any spaces or commas frequently found in sysex strings
+    --this condenses the sysex string for processing
+    sysexString = string.gsub(sysexString,"[%s%,]","")
+    -- check if the string has odd number of chars, denoting an invalid sysex string
     local size = #sysexString
     if ((size % 2) ~= 0) then
         return {}
     end
     local dump = {}
     local get = ""
+    -- iterate the sysex string, capturing text in pairs and store in table element
     for i=1,#sysex,2 do
         get = string.sub(sysex,i,i+1)
         dump[#dump+1] = get
+        -- log each operation
         print(tostring(i)..": ["..tostring(get).."]")
     end
     return dump
+end
+
+---format a sysex dump table to a string. 
+---default delimeter is a space [ ] but if a second argument is provided, it will use it instead
+---@param syxDumpTable table - table of sysex hex values [F7]
+---@param delim string - one or more characters to use for delimeters
+local function syxDumpTableToString(syxDumpTable, delim)
+    delim = delim or " "
+    local hexstring = table.concat(syxDumpTable, delim)
+    print("Table Dump: \n" .. tostring(hexstring))
+    return hexstring
 end
 
 SysexSpec = {}
@@ -155,6 +176,14 @@ end
 --[[ sysex dumps ]]--
 
 
+SysexDumpDeviceConfiguration = {}
+function SysexDumpDeviceConfiguration:new()
+    setmetatable({},SysexDumpDeviceConfiguration)
+
+    return self
+end
+
+
 SysexDumps = {}
 ---common object to house ALL data dump tables
 ---sysex should be parsed a table, with each cell holding one hex value (2chars): ie: 'F7'
@@ -233,21 +262,22 @@ end
 local sysD = SysexDumps:new()
 print("size: " .. #sysD.ParameterMinMax_03 .. " is: " .. tostring(sysD.isParameterMinMax_03()))
 
+sysD.SetupDump_1C = parseSysexToTable(sysex)
 
-
-
+print("OUTPUT:\n"..syxDumpTableToString(sysD.SetupDump_1C))
+print("OUTPUT:\n"..syxDumpTableToString(sysD.SetupDump_1C,","))
 
 
 
 --[[ tests ]]--
-local syxDumpTable = parseSysex(sysex)
+local syxDumpTable = parseSysexToTable(sysex)
 print(table.concat(syxDumpTable,","))
 
 -- local sysexDeviceInquiry_Test = SysexDeviceInquiry:new()
 -- local thisvalue = sysexDeviceInquiry_Test.Param_ManufacturersSysexId_Index
 -- print(thisvalue)
 
-local sysexDump = parseSysex(sysex)
+local sysexDump = parseSysexToTable(sysex)
 
 local sysexDeviceInquiry = parseDeviceInquiryResponse(sysexDump)
 
