@@ -156,50 +156,76 @@ end
 
 
 SysexDumps = {}
+---common object to house ALL data dump tables
+---sysex should be parsed a table, with each cell holding one hex value (2chars): ie: 'F7'
+---data can then be read using the index as a position locator in the sysex dump
+---@return table - table storing all dump tables
 function SysexDumps:new()
     setmetatable({},SysexDumps)
-    self.DeviceInquiry = {}
+
+    --[[ field notes
+        for each dump type, there's 2 fields:
+         1. dump data in a table
+         2. isDump function to return true if table has data
+    ]]--
+
+    --[[ Sysex non-realtime ]]--
+    self.DeviceInquiry_0601 = {}
+    self.isDeviceInquiry_0601 = function() return #self.DeviceInquiry_0601 > 0 end
+    --[[ sysex parameter ]]--
     self.ParameterValue_0201 = {}
+    self.isParameterValue_0201 = function() return #self.ParameterValue_0201 > 0 end
     self.ParameterMinMax_03 = {}
-    self.GenericName_0B = {}
-    self.HardwareConfiguration_09 = {}
-    self.DumpRequest = {}
-    self.PresetDumpHeaderClosed_1001 = {}
-    self.PresetDumpMessageClosed_1002 = {}
-    self.PresetDumpHeaderOpen_1003 = {}
-    self.PresetDumpMessageOpen_1004 = {}
-    self.PresetCommonParams_1010 = {}
-    self.PresetCommonGeneralParams_1011 = {}
-    self.PresetCommonArpParams_1012 = {}
-    self.PresetCommonEffectsParams_1013 = {}
-    self.PresetCommonLinkParams_1014 = {}
-    self.PresetLayerParameters_1020 = {}
-    self.PresetLayerCommonParams_1021 = {}
-    self.PresetLayerFilterParams_1022 = {}
-    self.PresetLayerLFOParams_1023 = {}
-    self.PresetLayerEnvelopeParams_1024 = {}
-    self.PresetLayerPatchcordParams_1035 = {}
-
     self.isParameterMinMax_03 = function() return #self.ParameterMinMax_03 > 0 end
-    self.isGenericName_0B = function() return #self.GenericName_0B > 0 end
+    --[[ configuration ]]--
+    self.HardwareConfiguration_09 = {}
     self.isHardwareConfiguration_09 = function() return #self.HardwareConfiguration_09 > 0 end
-    self.isDumpRequest = function() return #self.DumpRequest > 0 end
+    --[[ sysem name ]]--
+    self.GenericName_0B = {}
+    self.isGenericName_0B = function() return #self.GenericName_0B > 0 end
+    --[[ prest dump closed loop ]]--
+    self.PresetDumpHeaderClosed_1001 = {}
     self.isPresetDumpHeaderClosed_1001 = function() return #self.PresetDumpHeaderClosed_1001 > 0 end
+    self.PresetDumpMessageClosed_1002 = {}
     self.isPresetDumpMessageClosed_1002 = function() return #self.PresetDumpMessageClosed_1002 > 0 end
+    --[[ prest dump open loop ]]--
+    self.PresetDumpHeaderOpen_1003 = {}
     self.isPresetDumpHeaderOpen_1003 = function() return #self.PresetDumpHeaderOpen_1003 > 0 end
+    self.PresetDumpMessageOpen_1004 = {}
     self.isPresetDumpMessageOpen_1004 = function() return #self.PresetDumpMessageOpen_1004 > 0 end
+    --[[ preset common ]]--
+    self.PresetCommonParams_1010 = {}
     self.isPresetCommonParams_1010 = function() return #self.PresetCommonParams_1010 > 0 end
+    self.PresetCommonGeneralParams_1011 = {}
     self.isPresetCommonGeneralParams_1011 = function() return #self.PresetCommonGeneralParams_1011 > 0 end
+    self.PresetCommonArpParams_1012 = {}
     self.isPresetCommonArpParams_1012 = function() return #self.PresetCommonArpParams_1012 > 0 end
+    self.PresetCommonEffectsParams_1013 = {}
     self.isPresetCommonEffectsParams_1013 = function() return #self.PresetCommonEffectsParams_1013 > 0 end
+    self.PresetCommonLinkParams_1014 = {}
     self.isPresetCommonLinkParams_1014 = function() return #self.PresetCommonLinkParams_1014 > 0 end
+    --[[ preset layer ]]--
+    self.PresetLayerParameters_1020 = {}
     self.isPresetLayerParameters_1020 = function() return #self.PresetLayerParameters_1020 > 0 end
+    self.PresetLayerCommonParams_1021 = {}
     self.isPresetLayerCommonParams_1021 = function() return #self.PresetLayerCommonParams_1021 > 0 end
+    self.PresetLayerFilterParams_1022 = {}
     self.isPresetLayerFilterParams_1022 = function() return #self.PresetLayerFilterParams_1022 > 0 end
+    self.PresetLayerLFOParams_1023 = {}
     self.isPresetLayerLFOParams_1023 = function() return #self.PresetLayerLFOParams_1023 > 0 end
+    self.PresetLayerEnvelopeParams_1024 = {}
     self.isPresetLayerEnvelopeParams_1024 = function() return #self.PresetLayerEnvelopeParams_1024 > 0 end
+    self.PresetLayerPatchcordParams_1035 = {}
     self.isPresetLayerPatchcordParams_1035 = function() return #self.PresetLayerPatchcordParams_1035 > 0 end
+    --[[ setup ]]--
+    self.SetupDump_1C = {}
+    self.isSetupDump_1C = function() return #self.SetupDump_1C > 0 end
 
+    --[[ not used 
+    -- self.GenericDumpRequest_61000100 = {}
+    -- self.PresetDumpRequest = {}
+    -- self.isDumpRequest = function() return #self.DumpRequest > 0 end
+    ]]--
 
     return self
 end
