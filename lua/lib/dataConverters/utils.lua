@@ -1,5 +1,10 @@
 #!/usr/bin/lua
---- coverter utility functions
+if false then -- For LuaDoc
+    ---
+    --- coverter utility functions
+        module "utils"
+end
+
 
 --[[ decimal utils ]]--
 
@@ -8,7 +13,7 @@
 --- Index is used for both the table index & the power of 2: 2^i
 --- @param decNum integer number 0 to 255
 --- @return string binary representation of the decimal number
-function Dec2bin(decNum)
+local function dec2bin(decNum)
 
 	
     -- error checking for valid binary: values 0-255
@@ -47,18 +52,18 @@ end
 --- Index is used for both the table index & the power of 2: 2^i
 --- @param decNum integer number 0 to 65536
 --- @return string binary represent
-function Dec2byte(decNum)
+local function dec2byte(decNum)
     if (decNum < 0) or (decNum >= 65536) then return "00000000,00000000" end
     local msb = math.floor(decNum / 256)
     local lsb = decNum % 256
     p("msb: " .. msb .. " lsb: " .. lsb)
     -- return byte in form of "00000000,00000000"
-    return Dec2bin(msb) .. "," .. Dec2bin(lsb)
+    return dec2bin(msb) .. "," .. dec2bin(lsb)
 end
 
 --- print a list of binary values
 --- @param power integer specifying max power to iterate to
-function PrintBinaryValuesList( --[[ optional ]] power)
+local function printBinaryValuesList(power)
     power = power or 16 -- enables power to be an optional parameter. if power=nil, then assignment fail
     for i=0,power do
         p("2^" .. i .. ": " .. 2^i)
@@ -70,7 +75,7 @@ end
 ---@param binaryString string binary number represented as a string
 ---@param base integer base used for conversion
 ---@return integer .return converted decimal number
-function Bin2dec(binaryString, base)
+local function bin2dec(binaryString, base)
     base = base or 2
 	return tonumber(binaryString, base)
 end
@@ -81,7 +86,7 @@ end
 --- convert boolean to string
 ---@param valueBoolean boolean boolean to parse
 ---@return string . returns 0 if false, 1 if true
-function BoolToStr(valueBoolean)
+local function boolToStr(valueBoolean)
 	
 	if valueBoolean == true then
 		return "1"
@@ -93,7 +98,7 @@ end
 ---convert string to boolean
 ---@param valueString string string to parse
 ---@return boolean . returns true if 1/"true", false if 0/"false"
-function StrToBool(valueString)
+local function strToBool(valueString)
 	if valueString == "1" or valueString == "true" then
 		return true
 	else
@@ -104,7 +109,7 @@ end
 ---convert string to boolean
 ---@param valueString string string to parse
 ---@return integer . returns true if 1/"true", false if 0/"false"
-function StrToBoolInt(valueString)
+local function strToBoolInt(valueString)
 	if valueString == "1" or valueString == "true" then
 		return 1
 	else
@@ -117,7 +122,7 @@ end
 ---converts numeric or string number 0-127 to hexstring
 ---@param value any - any value 0-127
 ---@return string, string - hex representation of passed value
-function Any2hex(value)
+local function any2hex(value)
     local num = tonumber(value)
     if num > 127 then
         return "00", string.format("value is too large [0-127]: [%s]",num)
@@ -128,10 +133,10 @@ end
 --
 -- Returns HEX representation of a String
 --
-function Str2hex(str)
+local function str2hex(str)
     local hex = ''
     while #str > 0 do
-        local hb = dec2hex(string.byte(str, 1, 1))
+        local hb = any2hex(string.byte(str, 1, 1))
         if #hb < 2 then hb = '0' .. hb end
         hex = hex .. hb
         str = string.sub(str, 2)
@@ -145,7 +150,7 @@ end
 --- nibblize a value into msb and lsb
 --- @param nibbleInt integer to process
 --- @return table return table with msb,lsb integers
-function Nibblize14bit (nibbleInt)
+local function nibblize14bit (nibbleInt)
     local nibbleTable = {}
     p("Nibblize: value: " .. nibbleInt)
     -- negative values need [2's complement]
@@ -167,7 +172,7 @@ end
 --- @param msbInt integer - MSB value
 --- @param lsbInt integer - LSB value
 --- @return integer value - denibbled integer value
-function DeNibblize14bit (msbInt, lsbInt)
+local function deNibblize14bit (msbInt, lsbInt)
     local value
     local rawValue = (msbInt * 128) + lsbInt
 
@@ -184,11 +189,11 @@ end
 --- convert a nibble(msb/lsb) to integer value
 --- @param nibbleTable table - table with 2 elements. nibble[0] = msb, nibble[1] = lsb
 --- @return integer value
-function DeNibblizeTable14bit(nibbleTable)
+local function deNibblizeTable14bit(nibbleTable)
     p(type(nibbleTable))
     if ( #nibbleTable == 2 ) then
         p("DeNibblize: " .. nibbleTable[1] .. "," .. nibbleTable[2])
-        return DeNibblize14bit(--[[msb]]nibbleTable[1], --[[lsb]]nibbleTable[2])
+        return deNibblize14bit(--[[msb]]nibbleTable[1], --[[lsb]]nibbleTable[2])
     else
         p("DeNibblize: table size invalid: expected 2: [".. #nibbleTable .. "]")
         return 0
@@ -201,31 +206,23 @@ end
 --- converts anything to a string
 --- @param value any
 --- @return string 
-function ToString(value)
+local function toString(value)
     return tostring(value)
 end
 
---- coverts table to delimited string
+--- coverts table to delimited string (default delim = ",")
 --- @param valueTable table table to convert to string
 --- @param separator string separator character
 --- @return string
-function TableToString(valueTable,separator)
-
+local function tableToString(valueTable,separator)
+    separator = separator or ","
     return table.concat(valueTable,separator)
-end
-
---- coverts table to delimited string using separator ","
---- @param valueTable table
---- @return string
-function TableToString(valueTable)
-
-    return ToString(valueTable,",")
 end
 
 ---converts a delimited string to a table
 ---@param valueString any
 ---@return table
-function StringToTable(valueString)
+local function stringToTable(valueString)
     local delim = ","
 
     local matchesTable = {}
@@ -245,7 +242,7 @@ end
 ---Print a table's content to console with specified delimeter ("," is default)
 ---@param valueTable table - table to print out. only 1-dimensional array supported
 ---@param delimChar string - a delimiter to print between table values
-function PrintTable(valueTable,delimChar)
+local function printTable(valueTable,delimChar)
     local delimChar = delimChar or ","
     local stringBuilder = {}
     -- cleaning table of nil values
@@ -262,15 +259,45 @@ end
 ---making all calls to this function will make it easy to update just this funciton
 ---when needed to output in Ctrlr
 ---@param value any
-function Printer(value)
+local function printer(value)
     print(tostring(value))
 end
 
 ---convenience function for Printer
 ---@param value any
-function p(value)
-    Printer(value)
+local function p(value)
+    printer(value)
 end
+
+---Checks two values of Equality
+---@param valueActual any - value to check
+---@param valueExpected any - expected value
+---@return boolean, string - true if values are equal
+local function assertEquals(valueActual, valueExpected)
+    local dataType = type(valueExpected)
+    local actual
+    local expected = valueExpected
+
+    if(dataType == "number") then
+        actual = tonumber(valueActual)
+    elseif (dataType == "string") then
+        actual = tostring(valueActual)
+    elseif (dataType == "boolean") then
+        actual = valueActual
+    elseif (dataType == "table") then
+        actual = valueActual.size()
+        expected = valueActual.size()
+    elseif (dataType == "nil") then
+    else
+    end
+
+    if (actual == expected ) then
+        return true, string.format("Equality Test:[true]: Actual:[%s] Expected:[%s]",toString(actual),toString(expected))
+    else
+        return false, string.format("Equality Test:[false]: Actual:[%s] Expected:[%s]",toString(actual),toString(expected))
+    end
+end
+
 
 
 --[[ nibble tests 
@@ -433,5 +460,24 @@ function dec2bin(decNum)
 end
 ]]--
 
-print("asdfa")
-print("asdfa")
+return {
+    any2hex = any2hex,
+    assertEquals = assertEquals,
+    bin2dec = bin2dec,
+    boolToStr = boolToStr,
+    dec2bin = dec2bin,
+    dec2byte = dec2byte,
+    deNibblize14bit = deNibblize14bit,
+    deNibblizeTable14bit = deNibblizeTable14bit,
+    nibblize14bit = nibblize14bit,
+    p = p,
+    printBinaryValuesList = printBinaryValuesList,
+    printTable = printTable,
+    printer = printer,
+    str2hex = str2hex,
+    stringToTable = stringToTable,
+    strToBool = strToBool,
+    strToBoolInt =strToBoolInt,
+    tableToString = tableToString,
+    toString = toString
+}
