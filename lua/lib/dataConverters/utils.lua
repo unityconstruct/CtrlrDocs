@@ -340,7 +340,33 @@ local function tableSortAndReturn(unsortedTable)
     return sortedTable
 end
 
+--[[ string contains ]]--#region
 
+---search a string for string value
+---@param haystack any - value to search in
+---@param needle any - value to search for
+---@param startAt any - start index in the haystack
+---@param boolPlain any - true = use 'plain' text search, false = use 'pattern matching'
+---@return boolean - . return true if needle is found in haystack
+local function isContains(haystack,needle,startAt,boolPlain)
+    startAt = startAt or 1
+    boolPlain = boolPlain or true
+    local found = string.find(haystack,needle,startAt,boolPlain)
+    if (found == nil) then
+        return false
+    else
+        return true
+    end
+end
+
+
+--[[ isContains tests ]]--
+--[[
+    print(tostring(isContains("abc", "bc",1,true)))
+    print(tostring(isContains("abc", "bd",1,true)))
+    print(tostring(isContains(123, 2 ,1,true)))
+    print(tostring(isContains(123, 4 ,1,true)))
+]]--
 
 
 --[[ nibble tests 
@@ -524,5 +550,6 @@ return {
     tableSort = tableSort,
     tableSortAndReturn = tableSortAndReturn,
     tableToString = tableToString,
-    toString = toString
+    toString = toString,
+    isContains = isContains
 }
