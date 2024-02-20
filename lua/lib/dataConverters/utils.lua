@@ -117,6 +117,7 @@ local function strToBoolInt(valueString)
 	end
 end
 
+
 --[[ hex utils ]]--
 
 ---converts numeric or string number 0-127 to hexstring
@@ -143,6 +144,7 @@ local function str2hex(str)
     end
     return hex
 end
+
 
 --[[ Nibble Utils]]
 
@@ -236,7 +238,6 @@ local function stringToTable(valueString)
 end
 
 
-
 --[[ output utils ]]--
 
 ---Print a table's content to console with specified delimeter ("," is default)
@@ -297,6 +298,48 @@ local function assertEquals(valueActual, valueExpected)
         return false, string.format("Equality Test:[false]: Actual:[%s] Expected:[%s]",toString(actual),toString(expected))
     end
 end
+
+--[[ table sorting ]]--#region
+---sort and return a table
+---@param tbl table - unsorted table
+---@return function - returns an iterator FUNCTION to be iterated on
+local function tableSort(tbl)
+    local tempArray = {}
+    -- iterate the table, inserting keys into a temporary array
+    for k in pairs(tbl) do table.insert(tempArray,k) end
+    -- then sort the temp keys array
+    table.sort(tempArray)
+    -- now iterate the keys array, putting the key/value pairs into the iterator
+    local i = 0
+    local iter = function()
+        i = i+1
+        -- nil value keys have no value & are simply assigned nil
+        if tempArray[i] == nil then return nil
+        -- otherwise return the key(tempArray[i]) and key[value](tbl[tempArray[i]])
+        else return tempArray[i], tbl[tempArray[i]]
+        end
+    end
+    return iter -- this returns a function, NOT a table
+end
+
+---sorts a table, then returns it
+---@param unsortedTable table - unsorted table
+---@return table - sorted table base on provided unsorted table
+local function tableSortAndReturn(unsortedTable)
+    local sortedTable = {}
+    -- pass unsorted table to the sorting function/iterator
+    -- tableSort returns a FUNCTION, NOT A TABLE
+    -- so then use the for k,v... loop to recreate the now sorted table
+    for k,v in tableSort(unsortedTable)
+    do
+        local item = tostring(k) .. " = " .. tostring(v)
+        print(item)
+        sortedTable[k] = v
+    end
+    -- now return the sorted table
+    return sortedTable
+end
+
 
 
 
@@ -478,6 +521,8 @@ return {
     stringToTable = stringToTable,
     strToBool = strToBool,
     strToBoolInt =strToBoolInt,
+    tableSort = tableSort,
+    tableSortAndReturn = tableSortAndReturn,
     tableToString = tableToString,
     toString = toString
 }
