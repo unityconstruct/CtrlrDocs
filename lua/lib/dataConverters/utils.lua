@@ -8,8 +8,8 @@ end
 
 --[[ decimal utils ]]--
 
---- converts a decimal number to its binary analog.
---- Uses a for loop to count down from 7 to 0
+--- converts a decimal number to its binary analog.<br/>
+--- Uses a for loop to count down from 7 to 0<br/>
 --- Index is used for both the table index & the power of 2: 2^i
 --- @param decNum integer number 0 to 255
 --- @return string binary representation of the decimal number
@@ -22,9 +22,9 @@ local function dec2bin(decNum)
     local tBinary = {}
     local i
 
-    -- iterate from 7 to 0 to populate each element with a 0 or 1
-    -- divide the number by a power of 2 and assign to table
-    -- the remainder reassigned to decNum using modulus
+    -- iterate from 7 to 0 to populate each element with a 0 or 1<br/>
+    -- divide the number by a power of 2 and assign to table<br/>
+    -- the remainder reassigned to decNum using modulus<br/>
     -- in this way a binary number is built from highest bit to lowest
         for i = 7, 0, -1 do
 
@@ -47,8 +47,8 @@ local function dec2bin(decNum)
 	--]]
 end
 	
---- converts a decimal number to its binary analog.
---- splits number into msb and lsb by dividing by 256
+--- converts a decimal number to its binary analog.<br/>
+--- splits number into msb and lsb by dividing by 256<br/>
 --- Index is used for both the table index & the power of 2: 2^i
 --- @param decNum integer number 0 to 65536
 --- @return string binary represent
@@ -70,7 +70,7 @@ local function printBinaryValuesList(power)
     end
 end
 
----convert a binary represented as string to decimal using specified base
+---convert a binary represented as string to decimal using specified base<br/>
 --- base would normally be '2' for binary string
 ---@param binaryString string binary number represented as a string
 ---@param base integer base used for conversion
@@ -148,7 +148,7 @@ end
 
 --[[ Nibble Utils]]
 
---- convert a decimal value to/from nibble
+--- convert a decimal value to/from nibble<br/>
 --- nibblize a value into msb and lsb
 --- @param nibbleInt integer to process
 --- @return table return table with msb,lsb integers
@@ -256,8 +256,8 @@ local function printTable(valueTable,delimChar)
     
 end
 
----convenience function for print
----making all calls to this function will make it easy to update just this funciton
+---convenience function for print<br/>
+---making all calls to this function will make it easy to update just this function<br/>
 ---when needed to output in Ctrlr
 ---@param value any
 local function printer(value)
@@ -299,7 +299,61 @@ local function assertEquals(valueActual, valueExpected)
     end
 end
 
---[[ table sorting ]]--#region
+
+--[[ sysex data utils ]]--
+
+---parse a sysex hexString into a table holding 2chars per element
+---@param sysexString string - sysex string with no space delimeters
+---@return table - . tabulated sysex data
+local function parseSyxToTable(sysexString)
+    --remove any spaces or commas frequently found in sysex strings
+    --this condenses the sysex string for processing
+    sysexString = string.gsub(sysexString,"[%s%,]","")
+    -- check if the string has odd number of chars, denoting an invalid sysex string
+    local size = #sysexString
+    if ((size % 2) ~= 0) then
+        return {}
+    end
+    local dump = {}
+    local get = ""
+    -- iterate the sysex string, capturing text in pairs and store in table element
+    for i=1,#sysexString,2 do
+        get = string.sub(sysexString,i,i+1)
+        dump[#dump+1] = get
+        -- log each operation
+        print(tostring(i)..": ["..tostring(get).."]")
+    end
+    return dump
+end
+
+---format a sysex dump table to a string. <br/>
+---default delimeter is a space [ ] but if a second argument is provided, it will use it instead
+---@param syxDumpTable table - table of sysex hex values [F7]
+---@param delim string - one or more characters to use for delimeters
+---@return string - . return a string with table contents concatenated with a delimeter
+local function syxDumpTableToString(syxDumpTable, delim)
+    local delim = delim or " "
+    local hexstring = table.concat(syxDumpTable, delim)
+    print("Table Dump: \n" .. tostring(hexstring))
+    return hexstring
+end
+
+---format a hextring to a delimited string. ie: [4e00] => [4e,00] or [4e 00] <br/>
+---  If hexstring is 'space-delimited', it will be trimmed of all spaces, then processed
+---@param sysexHexString string - hexstring to be reformated. 
+---@param delim string - optional string delimeter. Defaults to ','.
+---@return string - .return a string of provided concatenated table
+local function sysHexStringFormatWith(sysexHexString, delim)
+    syxDumpTableToString(parseSyxToTable(sysexHexString),delim)
+end
+
+
+--[[ table utils ]]--
+
+
+
+--[[ table sorting ]]--
+
 ---sort and return a table
 ---@param tbl table - unsorted table
 ---@return function - returns an iterator FUNCTION to be iterated on
@@ -538,6 +592,7 @@ return {
     dec2byte = dec2byte,
     deNibblize14bit = deNibblize14bit,
     deNibblizeTable14bit = deNibblizeTable14bit,
+    isContains = isContains,
     nibblize14bit = nibblize14bit,
     p = p,
     printBinaryValuesList = printBinaryValuesList,
@@ -547,9 +602,10 @@ return {
     stringToTable = stringToTable,
     strToBool = strToBool,
     strToBoolInt =strToBoolInt,
+    syxDumpTableToString = syxDumpTableToString,
+    sysHexStringFormatWith = sysHexStringFormatWith,
     tableSort = tableSort,
     tableSortAndReturn = tableSortAndReturn,
     tableToString = tableToString,
     toString = toString,
-    isContains = isContains
 }
