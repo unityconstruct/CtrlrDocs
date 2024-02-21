@@ -1,5 +1,13 @@
 # emu midi info
 
+
+# Bank Select 
+b0 00 0e
+b0 20 00
+
+# Program Change
+c0 40 00
+
 ## MIDI Device Inquiry Responses
 ### Family
 |  |  |  |
