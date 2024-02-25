@@ -33,3 +33,32 @@ Members:
 Attributes:
 
 -----------------------------------------------------------------
+
+
+## Functions
+
+addNewProgram
+getPropertyDouble
+getProperty
+getProgramDescription
+getBankName
+getFirmware
+getPropertyInt
+getNumPrograms
+setPropertyString
+getBankDescription
+getProgramName
+setPropertyColour
+getEditBuffer
+setPropertyDouble
+addNewCustomData
+setPropertyInt
+removeProperty
+getCurrentProgramMIDINumber
+getNumBanks
+getObjectTree
+setProperty
+getPropertyString
+addNewBank
+getSnapshots
+getCurrentBankMIDINumber

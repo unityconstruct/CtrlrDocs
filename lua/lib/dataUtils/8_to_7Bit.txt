@@ -1,0 +1,151 @@
+8_to_Bit = function(midBlock)
+
+	local nn = midBlock:getSize()/8
+
+	local dat = {}
+	if nn == 7 then
+
+		--get the first Byte of each Block of 8
+
+		local byte1 = midBlock:getRange(0,1)
+		local byte2 = midBlock:getRange(8,1)
+		local byte3 = midBlock:getRange(16,1)
+		local byte4 = midBlock:getRange(24,1)
+		local byte5 = midBlock:getRange(32,1)
+		local byte6 = midBlock:getRange(40,1)
+		local byte7 = midBlock:getRange(48,1)
+
+		--write each Byte to a table
+
+		for i=0,55 do
+			dat[i+1]=midBlock:getByte(i)
+		end
+	
+		--get the single bits of the first Byte of 8, to hex. This will be the MSb
+
+		local bit00 = byte1:getBitRange(0,1)
+		local bit01 = byte1:getBitRange(1,1)
+		local bit02 = byte1:getBitRange(2,1)
+		local bit03 = byte1:getBitRange(3,1)
+		local bit04 = byte1:getBitRange(4,1)
+		local bit05 = byte1:getBitRange(5,1)
+		local bit06 = byte1:getBitRange(6,1)		
+
+		local bit10 = byte2:getBitRange(0,1)
+		local bit11 = byte2:getBitRange(1,1)
+		local bit12 = byte2:getBitRange(2,1)
+		local bit13 = byte2:getBitRange(3,1)
+		local bit14 = byte2:getBitRange(4,1)
+		local bit15 = byte2:getBitRange(5,1)
+		local bit16 = byte2:getBitRange(6,1)
+
+		local bit20 = byte3:getBitRange(0,1)
+		local bit21 = byte3:getBitRange(1,1)
+		local bit22 = byte3:getBitRange(2,1)
+		local bit23 = byte3:getBitRange(3,1)
+		local bit24 = byte3:getBitRange(4,1)
+		local bit25 = byte3:getBitRange(5,1)
+		local bit26 = byte3:getBitRange(6,1)
+
+		local bit30 = byte4:getBitRange(0,1)
+		local bit31 = byte4:getBitRange(1,1)
+		local bit32 = byte4:getBitRange(2,1)
+		local bit33 = byte4:getBitRange(3,1)
+		local bit34 = byte4:getBitRange(4,1)
+		local bit35 = byte4:getBitRange(5,1)
+		local bit36 = byte4:getBitRange(6,1)
+
+		local bit40 = byte5:getBitRange(0,1)
+		local bit41 = byte5:getBitRange(1,1)
+		local bit42 = byte5:getBitRange(2,1)
+		local bit43 = byte5:getBitRange(3,1)
+		local bit44 = byte5:getBitRange(4,1)
+		local bit45 = byte5:getBitRange(5,1)
+		local bit46 = byte5:getBitRange(6,1)
+
+		local bit50 = byte6:getBitRange(0,1)
+		local bit51 = byte6:getBitRange(1,1)
+		local bit52 = byte6:getBitRange(2,1)
+		local bit53 = byte6:getBitRange(3,1)
+		local bit54 = byte6:getBitRange(4,1)
+		local bit55 = byte6:getBitRange(5,1)
+		local bit56 = byte6:getBitRange(6,1)
+
+		local bit60 = byte7:getBitRange(0,1)
+		local bit61 = byte7:getBitRange(1,1)
+		local bit62 = byte7:getBitRange(2,1)
+		local bit63 = byte7:getBitRange(3,1)
+		local bit64 = byte7:getBitRange(4,1)
+		local bit65 = byte7:getBitRange(5,1)
+		local bit66 = byte7:getBitRange(6,1)
+
+local list = {}
+
+		--the 7 last Bytes of each Block of 8, get their MSb back and are collected as hex in a table
+
+		list[1] = string.format('%.2x', (dat[2]+(bit00*128)))
+		list[2] = string.format('%.2x', (dat[3]+(bit01*128)))
+		list[3] = string.format('%.2x', (dat[4]+(bit02*128)))
+		list[4] = string.format('%.2x', (dat[5]+(bit03*128)))
+		list[5] = string.format('%.2x', (dat[6]+(bit04*128)))
+		list[6] = string.format('%.2x', (dat[7]+(bit05*128)))
+		list[7] = string.format('%.2x', (dat[8]+(bit06*128)))
+
+		list[8] = string.format('%.2x', (dat[10]+(bit10*128)))
+		list[9] = string.format('%.2x', (dat[11]+(bit11*128)))
+		list[10] = string.format('%.2x', (dat[12]+(bit12*128)))
+		list[11] = string.format('%.2x', (dat[13]+(bit13*128)))
+		list[12] = string.format('%.2x', (dat[14]+(bit14*128)))
+		list[13] = string.format('%.2x', (dat[15]+(bit15*128)))
+		list[14] = string.format('%.2x', (dat[16]+(bit16*128)))
+
+		list[15] = string.format('%.2x', (dat[18]+(bit20*128)))
+		list[16] = string.format('%.2x', (dat[19]+(bit21*128)))
+		list[17] = string.format('%.2x', (dat[20]+(bit22*128)))
+		list[18] = string.format('%.2x', (dat[21]+(bit23*128)))
+		list[19] = string.format('%.2x', (dat[22]+(bit24*128)))
+		list[20] = string.format('%.2x', (dat[23]+(bit25*128)))
+		list[21] = string.format('%.2x', (dat[24]+(bit26*128)))
+
+		list[22] = string.format('%.2x', (dat[26]+(bit30*128)))
+		list[23] = string.format('%.2x', (dat[27]+(bit31*128)))
+		list[24] = string.format('%.2x', (dat[28]+(bit32*128)))
+		list[25] = string.format('%.2x', (dat[29]+(bit33*128)))
+		list[26] = string.format('%.2x', (dat[30]+(bit34*128)))
+		list[27] = string.format('%.2x', (dat[31]+(bit35*128)))
+		list[28] = string.format('%.2x', (dat[32]+(bit36*128)))
+
+		list[29] = string.format('%.2x', (dat[34]+(bit40*128)))
+		list[30] = string.format('%.2x', (dat[35]+(bit41*128)))
+		list[31] = string.format('%.2x', (dat[36]+(bit42*128)))
+		list[32] = string.format('%.2x', (dat[37]+(bit43*128)))
+		list[33] = string.format('%.2x', (dat[38]+(bit44*128)))
+		list[34] = string.format('%.2x', (dat[39]+(bit45*128)))
+		list[35] = string.format('%.2x', (dat[40]+(bit46*128)))
+
+		list[36] = string.format('%.2x', (dat[42]+(bit50*128)))
+		list[37] = string.format('%.2x', (dat[43]+(bit51*128)))
+		list[38] = string.format('%.2x', (dat[44]+(bit52*128)))
+		list[39] = string.format('%.2x', (dat[45]+(bit53*128)))
+		list[40] = string.format('%.2x', (dat[46]+(bit54*128)))
+		list[41] = string.format('%.2x', (dat[47]+(bit55*128)))
+		list[42] = string.format('%.2x', (dat[48]+(bit56*128)))
+
+		list[43] = string.format('%.2x', (dat[50]+(bit60*128)))
+		list[44] = string.format('%.2x', (dat[51]+(bit61*128)))
+		list[45] = string.format('%.2x', (dat[52]+(bit62*128)))
+		list[46] = string.format('%.2x', (dat[53]+(bit63*128)))
+		list[47] = string.format('%.2x', (dat[54]+(bit64*128)))
+		list[48] = string.format('%.2x', (dat[55]+(bit65*128)))
+		list[49] = string.format('%.2x', (dat[56]+(bit66*128)))
+
+		dat2Hextable = {}
+			for i=1,56 do
+				dat2Hextable[i] = string.format("%.2x",dat[i])
+			end
+
+		local f = table.concat(list, ' ')
+		--dump(table.concat(list, '\t'))
+		return f
+	end
+end

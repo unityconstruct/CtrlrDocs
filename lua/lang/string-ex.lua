@@ -35,3 +35,7 @@ print ( tostring ( decNum % 2^i))
 
 -- print( string.byte(  bin:gsub("\\x(%x%x)", function(hex) return string.char(tonumber(hex,16)) end)   ) ,1 )
 
+
+print (string.format ("decimal=%d hex=%x", 0x20, 32))
+
+print("done")

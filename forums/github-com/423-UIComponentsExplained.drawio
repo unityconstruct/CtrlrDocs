@@ -1,0 +1,46 @@
+<mxfile host="65bd71144e">
+    <diagram id="SB_XCcCVusqikz1iOfk-" name="Page-1">
+        <mxGraphModel dx="1528" dy="966" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="3" value="CtrlrDocumentPanel&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fillStyle=solid;fontColor=#FFFFFF;horizontal=1;verticalAlign=bottom;align=center;labelPosition=center;verticalLabelPosition=top;strokeColor=#FF33FF;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="80" y="50" width="1210" height="910" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="CtrlrEditor" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fillStyle=solid;fontColor=#FFFFFF;horizontal=1;verticalAlign=bottom;align=left;strokeColor=#00FF00;labelPosition=center;verticalLabelPosition=top;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="80" y="70" width="1200" height="890" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="CtrlrPanel" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fillStyle=solid;fontColor=#FFFFFF;horizontal=1;verticalAlign=top;align=center;strokeColor=#00FFFF;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="80" y="80" width="1190" height="860" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" style="edgeStyle=none;html=1;fontColor=#FFFFFF;fontStyle=1" edge="1" parent="1" source="5" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="MenuBar" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#4F0000;fillStyle=solid;fontColor=#FF3333;horizontal=1;verticalAlign=top;align=center;strokeColor=#FF3333;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="80" y="108" width="1190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="CtrlrPanelEditor" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#4F4F10;fillStyle=solid;fontColor=#FFFF33;horizontal=1;verticalAlign=top;align=left;strokeColor=#FFFF33;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="80" y="138" width="1190" height="782" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="ctrlrPanelViewpor[0]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002424;fillStyle=solid;fontColor=#00FFFF;horizontal=1;verticalAlign=bottom;align=center;strokeColor=#00FFFF;labelPosition=center;verticalLabelPosition=top;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="90" y="160" width="780" height="740" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="spacerComponent" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002424;fillStyle=solid;fontColor=#00FFFF;horizontal=1;verticalAlign=bottom;align=center;strokeColor=#00FFFF;labelPosition=center;verticalLabelPosition=top;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="880" y="159" width="20" height="740" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="ctrlrPanelProperties[2]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002424;fillStyle=solid;fontColor=#00FFFF;horizontal=1;verticalAlign=bottom;align=center;strokeColor=#00FFFF;labelPosition=center;verticalLabelPosition=top;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="910" y="160" width="350" height="740" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="CtrlrPanelComponentProperties" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#005200;fillStyle=solid;fontColor=#00FF00;horizontal=1;verticalAlign=top;align=center;strokeColor=#00FF00;labelPosition=center;verticalLabelPosition=middle;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="920" y="190" width="320" height="690" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="CtrlrViewport" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#660000;fillStyle=solid;fontColor=#FFFFFF;horizontal=1;verticalAlign=top;align=center;strokeColor=#00FFFF;labelPosition=center;verticalLabelPosition=middle;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="100" y="170" width="760" height="720" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="CtrlrPanelCanvas" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FBFFFA;fillStyle=solid;fontColor=#4F203E;horizontal=1;verticalAlign=top;align=center;strokeColor=#4F203E;labelPosition=center;verticalLabelPosition=middle;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="140" y="250" width="570" height="470" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
