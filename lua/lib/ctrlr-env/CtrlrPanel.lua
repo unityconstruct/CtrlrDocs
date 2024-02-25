@@ -1,16 +1,18 @@
 #!/usr/bin/lua
-local CtrlrModulator = require "CtrlrDocs.lua.lib.sysex.cstation.CtrlrModulator"
 
-print(tostring(CtrlrModulator:isVisible()))
+-- local CtrlrModulator = require "CtrlrModulator"
+-- local CtrlrModulator = require "CtrlrDocs.lua.lib.ctrlr-env.ctrlr-mocks.CtrlrModulator"
 
-CtrlrModulator.getComponentAt("id")
+-- print(tostring(CtrlrModulator:isVisible()))
+
+-- CtrlrModulator.getComponentAt("id")
 
 
-if false then -- For LuaDoc
-    ---
-    --- utilty classes for mocking Ctrlr
-        module "CtrlrPanel"
-end
+-- if false then -- For LuaDoc
+--     ---
+--     --- utilty classes for mocking Ctrlr
+--         module "CtrlrPanel"
+-- end
 
 local Modulator = {}
 local Component = {}

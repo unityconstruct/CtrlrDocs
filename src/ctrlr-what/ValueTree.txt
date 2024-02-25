@@ -1,5 +1,3 @@
-# ValueTree
-
 Object type [ValueTree]
 -----------------------------------------------------------------
 
@@ -8,23 +6,22 @@ Members:
 	                        __init:	function
 	                       indexOf:	function
 	              getChildWithName:	function
-	                   toXmlString:	function
 	                   getProperty:	function
-	           removeAllProperties:	function
-	                     moveChild:	function
+	                   hasProperty:	function
+	                   setProperty:	function
 	                      getChild:	function
 	                getNumChildren:	function
 	                   addListener:	function
-	             removeAllChildren:	function
+	                   toXmlString:	function
 	                       hasType:	function
 	      getOrCreateChildWithName:	function
 	                    createCopy:	function
-	                   hasProperty:	function
-	                   setProperty:	function
+	                     moveChild:	function
+	           removeAllProperties:	function
 	                       isValid:	function
+	             removeAllChildren:	function
 	                   removeChild:	function
 	                      addChild:	function
-	                     createXml:	function
 	                     getParent:	function
 	                isEquivalentTo:	function
 	                removeProperty:	function
@@ -41,39 +38,3 @@ Members:
 Attributes:
 
 -----------------------------------------------------------------
-
-
-## Functions
-
-getSibling
-__init
-indexOf
-getChildWithName
-toXmlString
-getProperty
-removeAllProperties
-moveChild
-getChild
-getNumChildren
-addListener
-removeAllChildren
-hasType
-getOrCreateChildWithName
-createCopy
-hasProperty
-setProperty
-isValid
-removeChild
-addChild
-createXml
-getParent
-isEquivalentTo
-removeProperty
-getChildWithProperty
-sendPropertyChangeMessage
-writeToStream
-getType
-isAChildOf
-removeListener
-getNumProperties
-getPropertyName

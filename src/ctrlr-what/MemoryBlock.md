@@ -101,3 +101,31 @@ end
 
 ```
 
+## Functions
+getData
+setBitRange
+getByte
+loadFromHexString
+toHexString
+insertIntoTable
+setSize
+fillWith
+insert
+setByte
+getSize
+getRange
+removeSection
+createFromTable
+swapWith
+ensureSize
+getBitRange
+copyTo
+replaceWith
+__init
+copyFrom
+toString
+append
+fromBase64Encoding
+toBase64Encoding
+toLuaTable
+

@@ -40,3 +40,23 @@ Attributes:
 
 -----------------------------------------------------------------
 ```
+
+## Functions CtrlrLuaUtils
+
+getVersionMajor
+getDirectoryWindow
+getVersionRevision
+infoWindow
+unpackDsiData
+questionWindow
+getMidiOutputDevices
+getPi
+getVersionString
+warnWindow
+saveFileWindow
+packDsiData
+getMidiInputDevices
+getVersionMinor
+askForTextInputWindow
+openFileWindow
+openMultipleFilesWindow

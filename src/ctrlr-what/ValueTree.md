@@ -1,4 +1,4 @@
-# ValueTree
+>>> what(panel:getObjectTree())
 
 Object type [ValueTree]
 -----------------------------------------------------------------
@@ -8,23 +8,22 @@ Members:
 	                        __init:	function
 	                       indexOf:	function
 	              getChildWithName:	function
-	                   toXmlString:	function
 	                   getProperty:	function
-	           removeAllProperties:	function
-	                     moveChild:	function
+	                   hasProperty:	function
+	                   setProperty:	function
 	                      getChild:	function
 	                getNumChildren:	function
 	                   addListener:	function
-	             removeAllChildren:	function
+	                   toXmlString:	function
 	                       hasType:	function
 	      getOrCreateChildWithName:	function
 	                    createCopy:	function
-	                   hasProperty:	function
-	                   setProperty:	function
+	                     moveChild:	function
+	           removeAllProperties:	function
 	                       isValid:	function
+	             removeAllChildren:	function
 	                   removeChild:	function
 	                      addChild:	function
-	                     createXml:	function
 	                     getParent:	function
 	                isEquivalentTo:	function
 	                removeProperty:	function
@@ -42,30 +41,28 @@ Attributes:
 
 -----------------------------------------------------------------
 
-
 ## Functions
 
 getSibling
 __init
 indexOf
 getChildWithName
-toXmlString
 getProperty
-removeAllProperties
-moveChild
+hasProperty
+setProperty
 getChild
 getNumChildren
 addListener
-removeAllChildren
+toXmlString
 hasType
 getOrCreateChildWithName
 createCopy
-hasProperty
-setProperty
+moveChild
+removeAllProperties
 isValid
+removeAllChildren
 removeChild
 addChild
-createXml
 getParent
 isEquivalentTo
 removeProperty

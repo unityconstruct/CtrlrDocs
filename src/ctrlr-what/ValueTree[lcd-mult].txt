@@ -1,0 +1,98 @@
+>>> consoleUtils("lcd-multi")
+Function List
+Object type [ValueTree]
+-----------------------------------------------------------------
+
+Members:
+	                    getSibling:	function
+	                        __init:	function
+	                       indexOf:	function
+	              getChildWithName:	function
+	                   getProperty:	function
+	                   hasProperty:	function
+	                   setProperty:	function
+	                      getChild:	function
+	                getNumChildren:	function
+	                   addListener:	function
+	                   toXmlString:	function
+	                       hasType:	function
+	      getOrCreateChildWithName:	function
+	                    createCopy:	function
+	                     moveChild:	function
+	           removeAllProperties:	function
+	                       isValid:	function
+	             removeAllChildren:	function
+	                   removeChild:	function
+	                      addChild:	function
+	                     getParent:	function
+	                isEquivalentTo:	function
+	                removeProperty:	function
+	          getChildWithProperty:	function
+	     sendPropertyChangeMessage:	function
+	                 writeToStream:	function
+	                       getType:	function
+	                    isAChildOf:	function
+	                removeListener:	function
+	              getNumProperties:	function
+	               getPropertyName:	function
+
+
+Attributes:
+
+-----------------------------------------------------------------
+Value Count: 54
+Value Tree: Properties
+componentVisibility                  : 1
+componentSentBack                    : 0
+componentMouseCursor                 : 2
+componentDisabled                    : 0
+componentIsLocked                    : 0
+componentSnapSize                    : 0
+componentGroupName                   :
+componentGroupped                    : 0
+componentRadioGroupId                : 0
+componentRadioGroupNotifyMidi        : 1
+componentVisibleName                 :
+componentLabelVisible                : 1
+componentLabelAlwaysOnTop            : 1
+componentLabelPosition               : none
+componentLabelWidth                  : 0
+componentLabelHeight                 : 0
+componentLabelJustification          : centred
+componentLabelColour                 : ff000000
+componentLabelFont                   : <Sans-Serif>;12;0;0;0;0;1;3
+componentEffect                      : 0
+componentEffectRadius                : 1.0
+componentEffectColour                : 0xff000000
+componentEffectOffsetX               : 0
+componentEffectOffsetY               : 0
+componentExcludedFromLabelDisplay    : 1
+componentValueDecimalPlaces          : 0
+componentLuaMouseMoved               : -- None
+componentLuaMouseDown                : -- None
+componentLuaMouseUp                  : -- None
+componentLuaMouseDrag                : -- None
+componentLuaMouseDoubleClick         : -- None
+componentLuaMouseEnter               : -- None
+componentLuaMouseExit                : -- None
+uiLabelBgColour                      : 0
+uiLabelTextColour                    : ffffffff
+uiLabelOutline                       : 0.0
+uiLabelOutlineColour                 : ff000000
+uiLabelJustification                 : left
+uiLabelFitFont                       : 0
+uiLabelFont                          : Electronic Highway Sign;18;0;0;0;0;1;2
+uiLabelText                          : Channel: [15]
+uiLabelDisplaysAllValues             : 0
+uiLabelDisplayFormat                 : %N = %s
+uiLabelInputHighlightTextColour      : 0xffffffff
+uiLabelInputHighlightColour          : ffa4a4ff
+uiLabelEditOnSingleClick             : 0
+uiLabelEditOnDoubleClick             : 0
+uiLabelEditFocusDiscardsChanges      : 1
+uiLabelInputAllowedChars             :
+uiLabelInputMaxLength                : 1024.0
+uiLabelChangedCbk                    : -- None
+uiType                               : uiLabel
+componentRectangle                   : 20 10 342 42
+componentLayerUid                    : a764b3d2ab0000002e00000000000000
